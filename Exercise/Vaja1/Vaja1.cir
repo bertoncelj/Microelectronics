@@ -1,0 +1,91 @@
+Komentar, naslov,..... (1 vrstico SPICE ingnorira)
+    *VSE Z MALO
+    
+    * Opis vezja
+    * 1.crka: tip elementa (r, c, l, m -mosfet, q-bjt, v -napetostni vir, i-* tokovni vir)
+    * sledi  : ime el.
+    * sledi   : vozel
+    *sledi      : parametri
+    
+    *faktorji multiplikacije
+    * k-kilo, m-mili, meg -mega, u-mikro,...
+    
+    *masa je vedno vozlišče nic
+    *ce rabis ket tok zmerit urens notri napajlnik
+    *sweep je default scale-> nvm googli neki pomembenga
+    
+    *v_imevira za napetostne vire n+, n- 
+    *parametri za napajalnik
+        *dc=xx
+        *acmag=xx sin=(...)
+    
+    r_rs    4   5   r=8k
+    r_rd    2   3   r=8k
+    
+    v_in    1   0   dc=0
+    v_vdd   2   0   dc=5
+    v_vss   5   0   dc=-5
+            
+    * m_imeTran d g s b (drain, gate, source, base) imeModela parametri
+    * .model imeModela  tipElementa parametri(kp, vto, lambda,..)
+
+    .model nmosTest nmos level=1 vto=1.4 kp=0.5m
+    m_ml    3   1   4   4   nmosTest    w=1u    l=1u
+    
+    
+    
+    *Ukazi:
+    *   echo: izpis + locimo med izpisi
+    *   op: resi enacbo
+    *   setplot: napises v spiceopus da ti da vn kakšne je opravil
+    *   display: katere stevilke je spice zracunob
+    *   let: isto kot display
+    *   print: 
+    *   let 
+    *   dc
+    *   destroy
+    *   plot
+    
+    
+    .control
+        echo Hello World
+        echo /************** VAJA 1 ******************/
+        *pobrisemo vse spremeljivke, prosti polnilnik
+        destroy all
+        
+        
+        
+        
+        
+        *delovna tocka op -> poisce delovno tocko
+        op
+        
+        *print v(1) v(2) v_in#beanch
+        * print all
+        
+        * tok skozi tranzistor
+        print -i(v_vdd) i(v_vss)    v(2,3)/@r_rd[r]
+        
+        *spremeljivke (vektorji)
+        let idq=i(v_vss)
+        let vdsq =v(3,4)
+        let vgsq = v(1,4)
+        
+        
+        print idq, vdsq, vgsq
+        
+        echo ........DC ANALIZA............
+        * enosmerna analiza
+        * dc param start stop korak
+        
+        dc @r_rs[r] 1k 10k 10
+        
+        plot -i(v_vdd) xlabel 'RS[ohm]' ylabel 'IDQ [A]'
+        
+        
+        
+    .endc
+    
+    
+    
+    .end
