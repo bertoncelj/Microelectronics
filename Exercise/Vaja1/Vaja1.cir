@@ -55,10 +55,6 @@ Komentar, naslov,..... (1 vrstico SPICE ingnorira)
         *pobrisemo vse spremeljivke, prosti polnilnik
         destroy all
         
-        
-        
-        
-        
         *delovna tocka op -> poisce delovno tocko
         op
         
@@ -95,9 +91,9 @@ Komentar, naslov,..... (1 vrstico SPICE ingnorira)
         let vout = v(3)
         
         *vs pomeni neki proti neki ce hocs popravit default skalo
-        *plot id vs vds xlabel 'vds[V]' ylabel 'id[A]'
+        plot id vs vds xlabel 'vds[V]' ylabel 'id[A]'
         
-        *plot vout xlabel 'vin[V]' ylabel 'vout[V]'
+        plot vout xlabel 'vin[V]' ylabel 'vout[V]'
         
         *za 4 nalogo kliknes na grafu in pogledas odvod da dobis koificjen
         
@@ -119,7 +115,7 @@ Komentar, naslov,..... (1 vrstico SPICE ingnorira)
          fourier 1k vout
          
          let vin_pp = max(v(1)) - min(v(1))
-            let vout_pp = max(v(3)) - min(v(3))
+         let vout_pp = max(v(3)) - min(v(3))
          let av = vout_pp/vin_pp
          print av
          *manka av minus ker je v protifazi

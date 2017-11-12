@@ -1,0 +1,33 @@
+Moje prvo vezje
+
+rs	4	5	r=4.4k
+rd	1 	2 	r=8k
+
+vin 3 0 dc=0
+vdd 1 0 dc=5
+vss 5 0 dc=-5
+
+.model nmosTransistor nmos level=1 vto=1.4 kp=0.5m
+m_ml 2 3 4 4 nmosTransistor w=1u l=1u
+
+.control
+	echo /************** VAJA 1 ******************/
+	 destroy all
+	*pobrise vse spremenljivke
+
+
+
+	*delovna tocka
+	op
+	
+	print  -i(vdd)
+	print  i(vss)
+	print  v(4,5)/@rs[r]
+	
+	let idq=i(vss)
+	let vout=v(2)
+	
+	
+.endc
+.end
+
