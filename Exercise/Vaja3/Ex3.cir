@@ -1,10 +1,8 @@
-Va 
+3.Lab Vaja: MOSFET  kaskodni ojačevalnik
 *Tf je funkcija ki iz vefje izpljuune vn kondeznatorje
 *ampak se jo ne rabi pri linearni elektroniki
-
-    *DC analiza
-    
-    *upornosti
+ 
+   	*upornosti
     r_r1    1   2   r=40.5k
     r_r2    2   3   r=31.6k
     r_r3    3   4   r=54.4k
@@ -13,15 +11,18 @@ Va
     r_rd    1   8   r=5k
     
     *kapacitiovnosti
-    c_c1    9    3    c=100u
-    c_c2    2    0    c=100u
-    c_c3    5   0   c=100u
+    c_c1    10    3    c=100u
+    c_c2    2    0     c=100u
+    c_c3    5    0     c=100u
     
     *napajalniki
     v_plus    1   0   dc=5     
     v_minus   4   0   dc=-5
-    v_vg_in   9   0   dc=0 sin(0, 201m, 5k) *amplitudna vrednost sinusa se probava, da gledas vrednost THC procent  napake!
+    v_vg_in   9   0   dc=0 sin(0, 201m, 5k) 
+    *amplitudna vrednost sinusa se probava, da gledas vrednost THC procent  napake!
     
+    *dodamo merilni napajalnik
+    vmer 9 10 dc = 0
     
     * m_imeTran d g s b (drain, gate, source, base) imeModela parametri
    .model nmos_model nmos level=1 vto=0.8 kp=1m
@@ -31,37 +32,26 @@ Va
     .control
         destroy all
         
-        *DC analiza
-        
-        echo _________VAJA3__________
+        echo _______________VAJA 2______________
         echo 
-        echo .........DC- NALOGO_2..........
         
         *naredi DC analizo
         op
-        
-        *ven iz pozitivnega vira
-        print i(v_plus)
-        
+
         *nastavimo vektorje ki jih iscemo
         let idq= v(5,4)/@r_rs[r]
-        let vdsq1 = v(3,4)
+        let vdsq1 = v(8,6)
         let vdsq2 = v(6,5)
         let vgsq1 = v(3,5)
         let vgsq2 = v(2,6)
-        let vg1   = v(3)
+        let vg1   = v(2)
         
         *izise vse nastavljene vektorje ki jih gledamo
         print idq vdsq1 vdsq2 vgsq1 vgsq2 vg1
         
-        *Naloga 3
-        echo ........Naloga_3........
-        
-        echo .................TRANZIANT ANALYSIS...................
-         *  tran dt tstop -> najbolj osnovna verzija
-         *     - dt je korak 
-         *     - tstop koliko signaala zahtevamo
-       
+        echo _______________VAJA 3______________
+        echo
+
         tran 1u 2m
         
         *dolocimo vektorje 
@@ -69,15 +59,25 @@ Va
         let vout = v(8)
         
         *izrise graf
-        plot vin vout xlabel 'time [s]' ylabel 'r:vin(t), g:vout(t)'
+        * plot vin vout v(6) xlabel 'time' ylabel 'vg1, vd2, vs1'
+        *plot vin vout xlabel 'time [s]' ylabel 'r:vin(t), g:vout(t)'
          
-         *  fourier analiza za popacenje
-         *  fourier f0 signal ->syntakse
+        fourier 5k vout
+        
+        let vin_PP = max(vin)-min(vin)
+    	let vout_PP = max(vout)-min(vout)
+        
+        let av = vout_PP/vin_PP
+        echo ___________HERE________________
+        let rin = vin_PP/(max(i(vmer))-min(i(vmer)))
+        echo ___________HERE_______________
+        let rout = vout_pp/((max(v(1,8))-min(v(1,8)))/@r_rd[r])
+        echo ___________HERE_______________
+        
+        print av rin rout
          
-         *fourier za dolocitev 5%
-         fourier 5k vout
-         
-         *Naloga 4
+         echo _______________VAJA 4______________
+        echo
          *Casovna analiza
          
          
