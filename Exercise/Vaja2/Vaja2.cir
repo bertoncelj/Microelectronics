@@ -1,99 +1,97 @@
-Naloga 2 vaja
-
-    *DC analiza
+Naloga 2 
     * upornostni
-    r_r1    1   2   r=  37.4k
-    r_r2    2   5   r= 151.5k
+    r_r1    1   2   r=37.5k
+    r_r2    2   5   r=150.6k
     
-    r_rs    1   3   r= 5.4k
-    r_rd    4   5   r=12.6k
+    r_rs    1   3   r=5.432k
+    r_rd    4   5   r=12.568k
     
     r_rsi	7	6	r=500
-    r_rl	8	0	r=1k
+    r_rl	8	0	r=10k
     
     *kapacitivnosti
     c_c1	6	2	c=100u
     c_cs	3	0	c=100u
     c_c2	4	8	c=100u
     
-    *napajalniki
-    v_vgate      2   0   dc=  5.436      
+    *napajalniki    
     v_vplus      1   0   dc=  9
     v_vminus     5   0   dc= -9
-    v_in 		 7   0   dc=0    sin = (0, 1, 5k)   
+    v_in 		 7   0   dc=0    sin = (0, 0.0148, 5k)   
     
-    
-  * m_imeTran d g s b (drain, gate, source, base) imeModela parametri
+    *build our model
+  	* m_imeTran d g s b (drain, gate, source, base) imeModela parametri
     * .model imeModela  tipElementa parametri(kp, vto, lambda,..)
     
     .model pmosTest pmos level=1 vto=-0.5 kp=0.5m
     m_ml    4   2   3   3   pmosTest    w=15u    l=1u
     
     .control
-        
-        echo /************** VAJA 2 ******************/
-        *pobrisemo vse spremeljivke, prosti polnilnik
         destroy all
+        
+        echo _______________VAJA 2______________
+        echo 
         
         *delovna tocka op -> poisce delovno tocko
         op
         
-        * tok skozi tranzistor
-        print -i(v_vplus) i(v_vminus)    v(4,5)/@r_rd[r]
-        
-        *dolocimo numericno stevilke
+        echo _____________Naloga_2________________
+        echo
+        *nastavimo vektorje ki jih iscemo
         let idq  = v(1,3)/@r_rs[r]
         let vsdq = v(3,4)
         let vsgq = v(2,4)
-        let vout = v(8)
         
         *izpis stevilk
-        print idq vsdq vsgq vout
-        
-        echo ..............DC ANALYSIS...............
-        * enosmerna analiza
-        * dc param start stop korak
-        *tako spreminajmo en paramater z @
-        dc @r_rs[r] 1k 10k 10
-        
-        echo ...............DC 2 ANALYSIS...............
-        *Problem je da tle bomo spremiljal DC napetost pa je c1 umes in ne pusti DC spremembe
+        print idq vsdq vsgq 
         
         
-        let id  = v(1,3)/@r_rs[r]
-        let vsd = v(3,4)
-        let vsg = v(2,4)
-        let vout = v(8)
+        echo _____________Naloga_3________________
+        echo "Sprememba kp poveca 10%"
+        echo 
         
-        *vs pomeni neki proti neki ce hocs popravit default skalo
-        plot id vs vsd xlabel 'vds[V]' ylabel 'id[A]'
+        idq_kp10posta = 5.027567e-04
+        print idq_kp10posta 
+        
+        dIdq = idq_kp10posta/idq
+        echo "Delta razlika Idq toka:"
+        print dIdq
+        
+        echo _____________Naloga_4________________
+        echo 
+        
+        tran 1u 5m
+        	
+        let id = v(1,3)/@r_rs[r]
+		let vsd=v(3,4)
+		let vsg=v(2,4)
+		let vout=v(8)
+		let vin=v(7)
+		let vss=v(3)
+		let vgg=v(2)
+		let vdd=v(4)
+		fourier 5k vout
+		
+		echo "plot"
+        plot vss vgg vdd xlabel 'time' ylabel 'vs, vg, vd'
         
         
-        echo ............. AC ANALYSIS..............
-         *  tran dt tstop -> najbolj osnovna verzija
-         *     - dt je korak 
-         *     - tstop koliko signaala zahtevamo
-         tran 10u 5m 
-         
-         let id=  v(1,3)/@r_rs[r]
-         let vds = v(3,4)
-         let vgs = v(2,4)
-         let vout = v(4)
-         let vin = v(7)
+        *fourierova analiza
+		echo _____________Naloga_5________________
+        echo
         
-         plot v(1) vout xlabel 'time [s]' ylabel 'r:vin(t), g:vout(t)'
-        
-         *  fourier analiza za popacenje
-         *  fourier f0 signal ->syntakse
-         fourier 1k vout
-         
-         let vin_pp = max(v(7)) - min(v(7))
-         let vout_pp = max(v(8)) - min(v(8))
-         let av = vout_pp/vin_pp
-         print av
-         *manka av minus ker je v protifazi
-         
-        
+			let vin_pp=max(vin)-min(vin)
+			let vout_pp=max(vout)-min(vout)
+			let av=vout_pp/vin_pp
+			
+			vs_pp=max(vss)-min(vss)
+			vg_pp=max(vgg)-min(vgg)
+			vd_pp=max(vdd)-min(vdd)
+			
+			plot vin vout
+			print av vs_pp vg_pp vd_pp
+
+          
       .endc
  .end
 
