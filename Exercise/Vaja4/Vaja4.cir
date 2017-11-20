@@ -1,0 +1,136 @@
+Vaja 4 
+    *includamo tranzistor
+    .include models.inc
+    
+    *DC analiza
+    
+    *upornosti
+    r_r1    1   2   r=242k
+    r_r2    2   3   r=395k
+    
+    r_re    4   3   r=10k
+    r_rsrc  7   6   r=10k
+    
+    *minimalna izhodna upornost
+    r_rl    5   0   r=20k    
+    
+    *kapacitiovnosti
+    c_c1    6    2    c=100u
+    c_c2    4    5    c=100u
+    
+    
+    *napajalniki
+    v_plus    1   0   dc=5     
+    v_minus   3   0   dc=-5
+    v_vsrc    7   0   dc=0 sin(0, 1.016, 5k)
+    
+    *to je za izhodno upornost dodamo novo napetostni AC generator in cx
+    *cx je zato da ne zjebe 
+   
+    *v_vx      8   0   dc=0 sin(0, 1, 5k)
+    *c_cx    8   5   c=10u
+    
+    * m_imeTran c b e  (, gate, source, base) imeModela parametri
+    * tukaj includamo model, ga ne setavimo, kot smo ga sestavili pri Vajah 1,2,3
+    q_q1    1   2   4   BC238B   
+    
+   
+  
+    .control
+        destroy all
+            echo _________VAJA4__________
+            echo
+            
+            echo .........NALOGA_1.........
+            *echo "preverimo da izhodni ne spremieni za vec kot 5% ce se Rl spreminja (2k->20k)"
+            echo
+            
+            
+            echo .........NALOGA_2..........
+        
+            *naredi DC analizo
+            op
+            
+            *nastavimo vektorje ki jih iscemo
+            let icq  = v(4,3)/@r_re[r]
+            let vceq = v(1,4)
+            let vbeq = v(2,4)
+            
+            *izpisemo vektroje
+            print icq, vceq, vbeq
+            
+            
+            echo .........NALOGA_3..........
+            
+            *izemrite izhodno upornot vezja Rout
+            *dodamo vx na koncu plus condezator namesto Rl-ja, tega odstranimo
+            *kondezator damo zato, da ne zjebemo DC analize, npr tu je ze c2 po defaultu, tako da tehnico ga ni treba dat, ampak sem ga dal se vseeno cx
+            *skolpimo vsrc damo amplitudo na nic
+            *damo na izmenicno AC, ukaz tran 
+            *gledamo peak to peak values od napetosti in toka novega generatorja
+            
+            
+            *tran 1u 2m
+            
+            *let vout    = v(8)
+            *let voutpp  = max(vout) - min(vout)
+            *let ioutpp  = max(i(v_vx)) - min(i(v_vx))  
+            *let rout = voutpp/ioutpp
+            
+            *print rout
+            
+            *ko koncamo zakomentriamo celotno kodo, ker moramo sklopiti nazaj vx, ix
+            
+            echo .........NALOGA_4............
+            
+            *AC analiza
+            tran 1u 2m
+            
+            *fourier za dolocitev 2%
+            *fourier 5k vout 
+            
+            * Za Rl MIN
+            *let vout = v(5)
+            *let vin  = v(7)
+            *let voutpp  = max(vout) - min(vout)
+            *let vinpp  = max(vin) - min(vin)  
+            
+            *let Avmin = voutpp/vinpp
+            
+            *print Avmin
+            Avmin = 0.868473
+            
+            
+            *Za Rl MAX
+            let vout = v(5)
+            let vin  = v(7)
+            let voutpp  = max(vout) - min(vout)
+            let vinpp  = max(vin) - min(vin)  
+            
+            let Avmax = voutpp/vinpp
+            
+            print Avmax
+            Avmax = 0.92549
+            
+            *razlika med Avmax/Avmin
+            Av = Avmin / Avmax
+            print Av
+            *av = 9.383926e-01
+            
+            
+            echo .........NALOGA_5.............
+           
+            *Av = Avmax
+            
+            *tokovno ojacanje 
+            let iout =  max((v(5)/@r_rl[r])) - min((v(5)/@r_rl[r]))
+            let iin  =  max(i(v_vsrc)) - min(i(v_vsrc))
+            
+       
+            print iout, iin
+            
+            Ai = iout/iin
+            print Ai
+    .endc
+    
+.end   
