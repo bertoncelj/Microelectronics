@@ -21,8 +21,8 @@ Vaja5
     
     *napajalniki
     vcc      1   0   dc=10     
-    v_vin    8   0   dc=0   sin(0, 1, 5k)
-    v_vout   7   0   dc=0 
+    v_vin    8   0   dc=0   sin(0,0.005,5k) acmag=1
+ 
 
     *viri nadomestni za merjenje toka
     v_icq1    4  10  dc=0
@@ -41,9 +41,9 @@ Vaja5
            
     echo _________VAJA4__________
     echo
-            
+    echo        
     echo .........NALOGA_2.........
-        
+       
     *naredi DC analizo
     op
             
@@ -56,10 +56,77 @@ Vaja5
     *izpisemo vektroje
      print icq1, icq2, veq1, veq2
     
-    
+    echo 
     echo .........NALOGA_3................
+     
+    echo ----------------------Napetostno, Tokovno ojacanje-----------------------------
+	
+	tran 1u 5m
+	
+	*napetostno ojacanje
+		let vout=v(7)
+		let vin=v(8)
+
+    	let vout_pp=max(vout)-min(vout)
+		let vin_pp=max(vin)-min(vin)
+	
+		let Av = vout_pp/vin_pp
+		
+	*tokovno ojacanje
+		let iin = i(v_vin)
+		let iout = vout/@r_rl[r]
+
+		let iout_pp=max(iout) - min(iout)
+		let iin_pp=max(iin) - min(iin)
+
+		let Ai=iout_pp/iin_pp
+	
+	*izpise ojacanje
+	print  Ai Av
+
+ 	echo 
+    echo .........NALOGA_4................
+     
+    echo ----------------------Malosignalna izmenicna analiza-----------------------------
     
+    *malosignalna izmenicna analiza => potrebuje vsaj en acmag vir
+    *sytaxa:
+        *ac tip_skale st_tock fstart fstop
+    *Kva naredi spice?:condenzatorje in tuljave nadomesti z kompleksorji
     
+    ac  dec   10   1   100meg
     
+    let vout=v(7)
+	let vin=v(8)
+	av=vout/vin
+    *aplitudni spekter
+    let av_db=db(av)
+    
+    *phase spector
+    let av_ph=ph(av)
+    
+    plot av_db xlabel 'f' ylabel 'Av[dB]'
+    plot av_ph xlabel 'f' ylabel 'Phase'
+    
+    *fl in fh se odcita iz grafa -> 3dB dy in pugledas kok kaze dx
+    
+    *fh = 3*10^5
+    *fl = 4*10^3
+    *izpis av za AC izmenicni signal
+    *print av
+   
+    echo
+    echo .........NALOGA_5................
+    echo ----------------------Vhodna impedanca-----------------------------
+    
+    let vin_z = v(8)
+	let iin_z = i(v_vin)
+	
+	let z_in = vin_z/iin_z
+	let z_in_abs = abs(z_in)
+	
+	plot z_in_abs
+	*vrednost preberes z grafa dol pri 5kHz
+    *z_in = 4.45*10^4 -> prebrana iz grafa dol
     .endc
 .end
