@@ -53,9 +53,52 @@ Vaja5
     echo 
     echo .........NALOGA_3................
      
+  	echo ----------------------Napetostno ojacanje-----------------------------
+	
+	tran 1u 5m
+	
+	*napetostno ojacanje
+		let vout=v(3)
+		let vin=v(8)
+
+    	let vout_pp=max(vout)-min(vout)
+		let vin_pp=max(vin)-min(vin)
+	
+		let Av = vout_pp/vin_pp
+  
+  		*izpise ojacanje
+		print   Av
   
   
-  
+  	echo ----------------------Malosignalna izmenicna analiza-----------------------------
+    
+    *malosignalna izmenicna analiza => potrebuje vsaj en acmag vir
+    *sytaxa:
+        *ac tip_skale st_tock fstart fstop
+    *Kva naredi spice?:condenzatorje in tuljave nadomesti z kompleksorji
+    
+   	ac  dec   10   1   100meg
+    
+   	let vout=v(7)
+	let vin=v(8)
+	av=vout/vin
+   	*aplitudni spekter
+  		  let av_db=db(av)
+    
+   	*phase spector
+  		  let av_ph=ph(av)
+    
+   		 plot av_db xlabel 'f' ylabel 'Av[dB]'
+   		 plot av_ph xlabel 'f' ylabel 'Phase'
+    
+    	*fl in fh se odcita iz grafa -> 3dB dy in pugledas kok kaze dx
+    
+    	*fh = 3*10^5
+   		 *fl = 4*10^3
+    	*izpis av za AC izmenicni signal
+   		 *print av
+   	
+    	echo
   
   	.endc
   	
