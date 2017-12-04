@@ -1,0 +1,62 @@
+Vaja5
+
+*includamo tranzistor
+    .include models.inc
+
+    *AC analiza
+    
+    *upornosti
+    r_rs      6   1   r=12.5k
+    r_rc      6   4   r=75.9k
+    
+    r_rscr    8   7   r=1k
+    r_rl      3   0   r=1.4k
+   
+    *kapacitiovnosti
+    c_c1    7    1    c=100u
+    c_cl    3    7    c=100u
+    c_ce    6    0    c=100u
+    
+    *napajalniki
+    vcc      6   0   dc=10     
+    v_vin    8   0   dc=0   sin(0,0.005,5k) acmag=1
+ 
+
+    *viri nadomestni za merjenje toka
+    v_icq     4  3  dc=0
+
+   
+    
+    * m_imeTran (c b e) imeModela parametri
+    q_q1    3 1 0   BC238B 
+   
+    
+    .control
+    
+    destroy all
+  
+  	echo _________VAJA6__________
+    echo
+    echo        
+    echo .........NALOGA_2.........
+       
+    *naredi DC analizo
+    op
+            
+    *nastavimo vektorje ki jih iscemo
+    let icq   = i(v_icq)
+    let vceq  = v(3,0)
+            
+    *izpisemo vektroje
+     print icq, vceq
+    
+    echo 
+    echo .........NALOGA_3................
+     
+  
+  
+  
+  
+  	.endc
+  	
+ .end
