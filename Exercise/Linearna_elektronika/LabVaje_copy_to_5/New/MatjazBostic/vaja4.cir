@@ -1,0 +1,76 @@
+vaja 4
+  .include models.inc
+ r_rsrc 1 2 r=10k
+ r_r1   3 4 r=242k
+ r_r2   3 6 r=395k
+ r_re   5 6 r=10k
+ r_rl   7 0 r=2k
+ 
+ c_c1   2 3 c=100u
+ c_c2   5 7 c=100u
+ 
+ v_vp   4 0 dc=5
+ v_vn   6 0 dc=-5
+ v_vsrc 1 0 dc=0    sin(0,1,5k)
+ v_vmer1    3 8 dc=0
+ v_vmer2    9 4 dc=0
+ 
+ 
+
+ Q_Q1 (9 8 5) BC238B
+ 
+ 
+ .control
+    
+    destroy all
+    
+    echo ##################### Vaja 1 ############################
+    
+    
+    echo ---------------------- OP1 -----------------------------
+    *Delovna tocka
+    op
+    
+    
+    let Ieq=v(5,6)/@r_re[r]
+    let Icq=-i(v_vmer2)
+    let Ibq=i(v_vmer1)
+    
+    let Vceq=v(4,5)
+    let Vbeq=v(3,5)
+   
+    
+    print Icq Ibq Vceq Vbeq 
+    
+    echo --------------------------------transientna analiza----------------------------------
+    
+    tran 1u 0.5m
+    
+    let vin=v(1)
+    let vout=v(7)
+    
+    let vout_pp=max(vout)-min(vout)
+    let vin_pp=max(vin)-min(vin)
+    
+    let Av=vout_pp/vin_pp
+    
+    let iout=v(7)/@r_rl[r]
+    let iout_pp=max(iout)-min(iout)
+    let iin_pp=max(i(v_vsrc))-min(i(v_vsrc))
+  
+    let Ai=iout_pp/iin_pp
+
+    
+    print Av Ai
+    
+    plot vin vout
+        
+    
+    fourier 5k vout
+    
+    
+    .endc
+    
+.end
+    
+   

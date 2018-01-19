@@ -1,0 +1,79 @@
+ 4. Laboratorijska vaja (Komentar,naslov,....)
+
+    .include models.inc
+ 
+    *Ukazi: echo, op(delona tocka), setplot, display, print, let, dc, destroy, plot, tran, fourier, max, min
+    *-------opis vezja------------------
+	
+	r_rsrc    1   2   r=10k
+	*pazi kje je rsrc povezan
+    r_re    5   6   r=10k
+	r_r1    4   3   r=242k
+	r_r2    3   6   r=395k
+	r_rl    7   0   r=20k
+   
+    
+
+	v_vin   1   0   dc=0    sin=(0, 0.20, 5k)
+    v_vp   4   0   dc=5
+    v_vn   6   0   dc=-5
+	*v_vout 7   0   dc=0    sin=(0, 1, 5k)
+	
+	
+	q_q1   4   3   5   BC238B
+	
+	
+	C1	2	3	c=100u	
+	C2	5	7	c=100u	
+	
+	
+	*------------Simulacija-----------------
+    
+    .control
+        destroy all
+    
+        echo ######### Vaja 4 #########
+        
+        
+        echo --------- op1 ---------
+		
+		*delovna tocka
+		op
+		
+        let ieq=v(5,6)/10000
+		let vceq=v(4,5)
+		let vbeq=v(3,5)
+		
+		
+		
+        print ieq vceq vbeq
+        
+        echo --------- TRAN1 ---------
+        
+		* tran dt tstop --- casovna analiza (dt-CASOVNI korak, )
+		
+        tran 1u 5m
+        
+
+        
+        *let vx=max(v(7))-min(v(7))
+		*let ix=max(-i(v_vout))-min(-i(v_vout))
+		*let rout=vx/ix
+		*print rout
+        
+        let vin_pp=max(v(1))-min(v(1))
+        let vout_pp=max(v(7))-min(v(7))
+        let av=vout_pp/vin_pp
+        
+        print av  
+        
+        let iout=max(v(7)/20000)-min(v(7)/20000)
+        let iin=max(-i(v_vin))-min(-i(v_vin))
+        let ai=iout/iin
+        print ai
+        
+        
+    .endc
+
+    .end
+ 

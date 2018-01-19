@@ -1,0 +1,47 @@
+Moje prvo vezje
+v1 1 0 dc=5
+r1 1 2 r=40.4864k
+r2 3 2 r=31.63k
+r3 3 4 r=54.4k
+v2 4 0 dc=-5
+v3 7 8 dc=0
+rs 4 5 r=5k
+rd 8 1 r=5k
+c1 3 9 c=100u
+v4 9 10 dc=0
+v_vin 10 0 dc=0 sin=(0,0.201,5k)
+c2 2 0 c=100u
+c3 5 0 c=100u
+m1 7 2 6 6  testmodel 
+m2 6 3 5 5 testmodel 
+.model testmodel nmos vto=0.8 kp=1m  lambda=0
+.control
+op
+echo ...op
+let vdsq2=v(7)-v(6)
+let vdsq1=v(6)-v(5)
+let idq=-i(v3)
+let vgs2=v(2)-v(6)
+let vgs1=v(3)-v(5)
+let Vg1=v(3)
+print Vg1 vdsq2 vdsq1 idq vgs2 vgs1
+echo ...tran
+tran 1u 1m
+let vout=v(7)
+let vin=v(9)
+plot vout vin
+echo ....
+fourier 5k vout 
+let vout=v(7)
+let vin =v(9)
+let vin_pp=max(vin)-min(vin)
+let vout_pp=max(vout)-min(vout)
+let av_abs=vout_pp/vin_pp
+print av_abs
+vinpp=max(v(10))-min(v(10))
+let ix=i(v4)
+ixpp=max(ix)-min(ix)
+rin=vinpp/ixpp
+print rin
+.endc
+.end

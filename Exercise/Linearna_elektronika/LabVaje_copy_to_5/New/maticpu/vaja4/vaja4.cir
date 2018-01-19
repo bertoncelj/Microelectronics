@@ -1,0 +1,46 @@
+ 
+
+
+.include models.inc
+
+vp 4 0 dc = 5
+vn 5 0 dc = -5
+vin 1 0 dc = 0 sin=(0, 0, 5k)
+vtest 7 0 dc = 0 sin=(0, 0.1, 5k)
+
+r1  2 4    r=242k
+r2  2 5    r=395k
+re  3 5    r=10k
+rsrc 1 8   r=10k
+rl 6 0 r=2k
+
+c1 8 2 c=100u
+c2 3 6 c=100u
+c3 7 6 c=100u
+
+
+q1 4 2 3 BC238B  
+	
+
+.control
+destroy all
+    echo ----------------------- OP 
+    
+    op
+    let iceq  = v(3,5)/@re[r] 
+    let vceq = v(4,3)
+    let vbeq = v(2,3)
+    
+    
+    print iceq vceq vbeq 
+ 
+    tran 0.05 1m
+    let vgg= max(v(7))-min(v(7))
+     let ig= max(i(vtest))-min(i(vtest))
+     let rout=vgg/ig
+     print rout
+    
+     
+    
+.endc
+.end

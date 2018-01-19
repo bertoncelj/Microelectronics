@@ -1,0 +1,98 @@
+Prva vaja pri LinEl
+
+
+* Opis vezja
+* 1. crka: tip el.(r,c,l,m-mosfet,q-bjt,v,i)
+*  sledi: ime el.(
+*  sledi: vozl.
+*  sledi: parametri
+
+* masa je vedno vozlisce 0
+* k.kilo m.mili meg.mega
+r_rs    4   5   r=4.4k
+r_rd    2   3   r=8k
+
+* v_imeVira n+  n-  dc=xx acmag=xx  sin=(offset, amp, freq)
+v_vin   1   0   dc=0    sin=(0, 0.5, 1k)
+v_vdd   2   0   dc=5
+v_vss   5   0   dc=-5
+
+* m_imeTran d g s b imeModela parametri
+* .model imeModela tipEl parametri (kp,vto,lambda,...)
+
+.model nmosTest nmos level=1 vto=1.4 kp=0.5m
+m_m1    3   1   4   4   nmosTest    w=1u    l=1u
+
+
+* komentar
+* ukazi: echo, op, setplot (zbirka rezultatov), display, let, dc, destroy, plot, tran fourier
+
+.control
+
+    destroy all
+    
+    echo #### Vaja 1 ####
+    
+    echo .......... OP1 ...........
+    * Delovna tocka
+    op
+    
+    * print i(v_vdd)  i(v_vss) v(2,3)/@r_rd[r]
+    
+    *spremenljivke (vektorji)
+
+    let idq=i(v_vdd)
+    let vdsq= v(3,4)
+    let vgsq= v(1,4)
+    let vout= v(3)
+    print idq vdsq vgsq vout
+    
+    echo ##### DC1 #####
+    
+    * dc param start stop korak
+    
+    dc @r_rs[r] 1k 10k 10
+    
+    *plot -i(v_vdd) xlabel "R_S [ohm]" ylabel "I_DQ [A]"
+    
+    echo ##### DC2 #####
+    
+    dc v_vin -10 10 0.1
+
+    let id=i(v_vdd)
+    let vds= v(3,4)
+    let vgs= v(1,4)
+    let vout= v(3)
+    
+    *plot id vs vds xlabel 'vds[V]'  ylabel 'id[A]'
+    *plot vout xlabel 'vin[V]' ylabel 'vout[V]'
+   
+    echo ##### TRAN1 #####
+    
+    * tran dt tstop
+    
+   
+    tran 0.1u 5m
+    
+    let vin=v(1)
+    let id=i(v_vdd)
+    let vds= v(3,4)
+    let vgs= v(1,4)
+    let vout= v(3)
+    
+    plot vin vout xlabel 'time' ylabel 'vin(t), vout(t)'
+   
+    *   fourier -popacenje
+    *   fourier f0 signal
+    fourier 1k vout
+    
+    let vin_pp=max(vin)-min(vin)
+    let vout_pp=max(vout)-min(vout)
+    let av_abs=vout_pp/vin_pp
+    print av_abs
+   
+.endc
+
+
+
+.end

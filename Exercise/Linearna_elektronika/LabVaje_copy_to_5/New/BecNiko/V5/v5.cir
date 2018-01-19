@@ -1,0 +1,105 @@
+VAJA 5: DARLINGTONOV PAR
+
+.include models.inc
+
+vcc 3 0 dc=10
+vin	1 0	dc=0	sin(0,0.005,5k)  acmag=1
+
+vmer1	4 t1	dc=0
+vmer2	4 t2	dc=0
+
+r1	2 3	r=142.8k
+r2	2 0	r=77k
+rc	3 4	r=1437
+re	6 0	r=1038
+rl	8 0	r=10k
+
+c1	2 1	c=100u
+c2	4 8	c=100u
+c3	6 0	c=100u 
+
+q1 t1 2 5 T2N2222
+q2 t2 5 6 T2N2222
+
+.control
+    
+    destroy all
+    
+    echo ##################### Vaja 5 ############################
+    
+    
+    echo ---------------------- OP1 -----------------------------
+    *Delovna tocka
+    op
+
+    
+	let Vceq1=v(t1,5)
+	let Vceq2=v(t2,6)
+
+	let Icq1=i(vmer1)
+	let Icq2=i(vmer2)
+    
+    
+    print Vceq1 Icq1 Vceq2 Icq2
+    
+    echo -------------------------- tranzientna analiza---------------
+    *napetostno in tokovno ojačanje 
+    
+    tran 1u 5m
+    
+    let vin=v(1)
+    let vout=v(8)
+    
+    let iin = i(vin)
+    let iout = vout/@rl[r]
+    
+    let vout_pp=max(vout)-min(vout)
+	let vin_pp=max(vin)-min(vin)
+
+	let iout_pp=max(iout)-min(iout)
+	let iin_pp=max(iin)-min(iin)
+	
+	let av= vout_pp/vin_pp
+	let ai= iout_pp/iin_pp
+	
+	print av ai
+    
+    echo ---------------------- malosignalna ac analiza--------------------
+    * napetostno ojačenje frekvenčni potek
+    
+    ac dec 10 1 10meg
+    
+    let vout=v(8)
+	let vin=v(1)
+	let av=vout/vin
+	let av_db=db(av)
+	
+    plot av_db xlabel 'f' ylabel 'av[dB]'
+    
+    let vin = v(1)
+	let iin = i(vin)
+	
+	let zin = vin/iin
+	let zin_abs = abs(zin)
+	
+	plot zin_abs
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    .endc
+    .end

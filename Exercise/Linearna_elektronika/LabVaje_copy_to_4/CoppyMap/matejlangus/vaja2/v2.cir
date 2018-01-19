@@ -1,0 +1,78 @@
+vaja 2
+
+
+
+	vin 	1 0 dc=0 sin=(0, 0.01428299, 5k)
+	vp 		4 0 dc=9
+	vn 		5 0 dc=-9
+
+	rsi 	1 2 r=500
+	r1 		4 3 r=37.445k
+	r2 		3 5 r=150.880k
+	rs		4 6 r=5.428k
+	rd		7 5 r=12.5728k
+	rl		8 0 r=10k
+
+	c1 		2 3 c=100u
+	c2 		7 8 c=100u
+	cs		6 0 c=100u
+	*r0		6 0 r=0
+	
+	m1 7 3 6 6 testmodel w=15u l=1u
+	*.model testmodel pmos vto=-0.5 kp=0.5m lambda=0
+		.model testmodel pmos vto=-0.5 kp=0.55m lambda=0
+
+	
+
+
+
+.control
+	destroy all
+
+
+    echo ------------------OP--------------------------------
+    op
+	
+	let idq=v(4,6)/@rs[r] 
+	let vsdq=v(6,7)
+	let vsgQ=v(6,3)
+	
+	print idq vsdq vsgq
+
+tran 1u 5m
+	let id=v(4,6)/@rs[r] 
+	let vsd=v(6,7)
+	let vsg=v(6,3)
+	let vout=v(8)
+	let vg=v(3)
+	let vs=v(6)
+	let vd=v(7)
+	let vin=v(1)
+fourier 5k vout
+
+	
+
+	vsa=max(vs)-min(vs)
+	vga=max(vg)-min(vg)
+	vda=max(vd)-min(vd)
+			
+	print  vsa vga vda
+
+	plot vg vd vs xlabel 'time' ylabel 'r:vg, g:vd, b:vs'
+
+			let vina=max(vin)-min(vin)
+			let vouta=max(vout)-min(vout)
+			let av=vouta/vina
+
+
+print av
+
+
+
+
+
+
+
+
+.endc
+.end

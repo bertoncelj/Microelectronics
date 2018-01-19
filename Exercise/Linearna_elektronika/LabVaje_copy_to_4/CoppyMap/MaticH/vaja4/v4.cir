@@ -1,0 +1,56 @@
+Vaja 4
+
+    .include models.inc
+
+    r_rsrc  1   4   r=10k
+    r_re    3   7   r=10k
+    r_rl    0   8   r=2k
+    r_r1    5   2   r=242k
+    r_r2    5   3   r=395k
+    
+    c_c1    5   4  c=100u
+    c_c2    7   8  c=100u
+    
+    v_vsrc      1   0   dc=0    sin=(0,  0.15, 5k)
+    vp   2   0   dc=5
+    v_vminus    3   0   dc=-5
+    
+    Q1 (6    5    7)  BC238B
+    
+    .control
+        echo ########## Vaja 4 ##########
+    
+        echo .......... OP1 ..........
+        
+        op
+           
+            let icq= -i(vp) - v(2,5)/242000
+            let vceq=(6,7)
+            let vbeq=(5,7)
+            
+            print icq vceq vbeq
+            
+        
+        echo .......... TRAN1 ..........
+        
+            tran  1u  5m
+            let id=v(2,6) / 5000
+            let vdsq1=v(7,8)
+            let vgsq1=v(4,8)
+            let vdsq2=v(6,7)
+            let vgsq2=v(5,7)
+            let vin=v(1)
+            let vout=v(6)
+            
+            fourier 5k vout
+           
+            let vin_pp=max(vin) - min(vin)
+            let vout_pp=max(vout) - min(vout)
+            let av=vout_pp/vin_pp
+        
+            print av
+        
+        
+    .endc
+
+    .end

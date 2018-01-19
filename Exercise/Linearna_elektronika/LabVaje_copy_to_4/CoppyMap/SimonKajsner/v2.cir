@@ -1,0 +1,78 @@
+ 2. Laboratorijska vaja (Komentar,naslov,....)
+
+ 
+    *Ukazi: echo, op(delona tocka), setplot, display, print, let, dc, destroy, plot, tran, fourier, max, min
+    *-------opis vezja------------------
+	
+	r_rsi	1	2	r=500
+	r_rs    4   5   r=5.432k
+    r_rd    6   7   r=12.568k
+	r_rl    8   0   r=10k
+	r_r1    5   3   r=37.45k
+	r_r2    7   3   r=150.8k
+
+	v_vin   1   0   dc=0    sin=(0, 0.0147, 5k)
+    v_v+   5   0   dc=9
+    v_v-   7   0   dc=-9
+	
+	
+
+	*m_imeTran d g s b imeModela parametri
+
+	.model pmosTest pmos vto=-0.5 kp=0.5m lambda=0
+    
+    m_m1    6   3   4   4   pmosTest w=15u l=1u
+	
+	
+	C1	2	3	c=100u	
+	C2	6	8	c=100u	
+	*Cs	4	0	c=100u	
+	*r_rcs 4 0 r=0
+	
+	*------------Simulacija-----------------
+    
+    .control
+        destroy all
+    
+        echo ######### Vaja 2 #########
+        
+        
+        echo --------- op1 ---------
+		
+		*delovna tocka
+		op
+		
+        let idq=v(6,7)/12568
+		let vsdq=v(4,6)
+		let vsgq=v(4,3)
+		
+		
+        print idq vsdq vsgq
+        
+        echo --------- TRAN1 ---------
+        
+		* tran dt tstop --- casovna analiza (dt-CASOVNI korak, )
+		
+		tran 1u 5m
+		
+		let id=v(6,7)/12568
+		let vsd=v(4,6)
+		let vsg=v(4,3)
+		let vout=v(8)
+		let vin=v(1)
+		let vs1=v(4)
+		let vg1=v(3)
+		let vd1=v(6)
+		fourier 5k vout
+		plot vs1 vg1 vd1 vin vout xlabel 'time' ylabel 'vs(red), vg(green), vd(blue), vin(purple), vout(black)'
+		
+		
+        let vin_pp=max(v(1))-min(v(1))
+        let vout_pp=max(v(8))-min(v(8))
+        let av=vout_pp/vin_pp
+        print av
+		
+    .endc
+
+    .end
+ 

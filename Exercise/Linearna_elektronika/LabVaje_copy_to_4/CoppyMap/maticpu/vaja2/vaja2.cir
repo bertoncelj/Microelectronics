@@ -1,0 +1,109 @@
+opis vezja
+
+
+
+
+rsi  1 2 r=500
+r1  4 3 r=37.5k
+r2  3 5 r=150.6k
+rs  4 6 r=5.432k
+rd  7 5 r=12.568k
+rl  8 0 r=10k
+
+
+
+c1       2    3                 c=100u
+c2       7    8                 c=100u
+*c3       6    0                 c=100u
+
+
+v_vin      1    0                  dc=0 sin=(0,10m,5k)
+v+         4    0                  dc=9
+v-         5    0                  dc=-9
+
+
+m_m1  7     3    6     6    testmodel w=15u  l=1u
+
+
+.model testmodel pmos vto=-0.5 kp=0.5m lambda=0
+
+
+.control
+
+op
+
+let idq=v(7,5)/12568
+let vsdq=v(6,7)
+let vsgq=v(6,3)
+
+print idq vsdq vsgq
+
+
+
+echo -----------TRAN1------------------
+    
+    
+    *tran dt tstop
+    
+    tran 10u 5m
+    
+   
+    
+    
+    let id=v(7,5)/12568
+    let vsd=v(6,7)
+    let vsg=v(6,3)
+    let vout=v(8)
+    let vin=v(1)
+    let vg=v(3)
+    let vd=v(7)
+    let v_s=v(6)
+
+
+        fourier 5k vout
+        plot v_s vd vg xlabel 'time' ylabel 'vs,vd vg'
+        *plot vd xlabel 'time' ylabel 'vd'
+        *plot vg xlabel 'time' ylabel 'vg'
+        
+    let vin_pp=max(vin)-min(vin)
+    let vout_pp=max(vout)-min(vout)
+    let av=vout_pp/vin_pp
+    let vs_pp=max(v_s)-min(v_s)
+    let vg_pp=max(vg)-min(vg)
+    let vd_pp=max(vd)-min(vd)
+
+
+    print av vs_pp vg_pp vd_pp
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.endc
+
+.end

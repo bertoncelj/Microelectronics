@@ -1,0 +1,39 @@
+komentar
+vp  1 0 dc=5
+vn  5 0 dc=-5
+voutt 9 0 dc = 0 sin(0 0.195 5k)
+
+
+
+
+r1  1 2 r=40.5k
+r2  2 3 r=31.6k
+r3  3 5 r=54.4k
+
+rd  1 8 r=5k
+rs  6 5 r=5k
+
+c1  3 0 c=100u
+c2  2 0 c=100u
+c3  6 0 c=100u
+c4  8 9 c=100u
+
+.model mosn nmos kp=0.5m vto=0.8 lambda=0.1m
+
+m1 8 2 7 7 mosn w=2u l=1u 
+m2 7 3 6 6 mosn w=2u l=1u
+
+.control
+destroy all
+tran 1u 5m
+voutt_pp = max(v(9))-min(v(9))
+ioutt_pp = max(i(voutt))-min(i(voutt))
+let rout = voutt_pp/ioutt_pp
+
+print rout
+
+
+
+.endc
+
+.end

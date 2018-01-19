@@ -1,0 +1,139 @@
+Prva vrstica je vedno komentar: NASLOV, OPIS, ...
+
+* SPICE OPUS opuŠČa VeliKE in maLE ČrkE !!!
+
+* KOMENTAR
+* UKAZI:
+	* echo
+	* op           :Analiza vezja
+	* dc
+	* setplot      :Pogledamo izvedene analize
+	* destroy all  :Pobrišemo izvedene analize
+	* display      :Izpis
+	* printf       :Izpis spremenljivk, [all] [v1] ...
+	* let          :Definiranje LOKALNE spremenljivke
+	* plot         :Izriši graf. 
+	* tran         :Tranzientna analiza
+	* fourier
+	* max
+	* min
+
+* ELEMENTI:
+	* 1.crka: tip el. (r,c,l,q,m,d,v,i, ...)
+	* sledi: ime el.
+	* sledi: vozlišča
+	* sledi: parametri
+
+
+* Prva črka za SPICE, ostalo pripona za ime!
+* Končnice za potence!
+	* k, meg, g, t ...
+	* m,   u, p, f ...
+* BREZ ENOT!
+r_rd	 2  3  r=8k
+r_rs   4  5  r=5k
+
+
+* v_ime  n+  n-
+	* dc=xxx
+	* sin=(ofset, ampl, freq)
+	* acmag=xxx
+v_vin  1  0  dc=0   sin=(0, 1.0, 1k)
+v_vdd  2  0  dc=5
+v_vss  5  0  dc=-5
+
+
+* MOSFET
+* m_ime  DRAIN  GATE  SOURCE  BULK  ime_modela  parametri
+m_m1     3      1     4       4     test_model  w=1u l=1u
+
+
+* MODEL
+* .model  ime_modela  tip_el  parametri
+	* vto - treshold voltage
+	* kp - MALI K!!!, K = .5 * _k_ * W/L
+.model  test_model  nmos  vto=1.4  kp=500u
+
+
+
+
+.control
+	destroy all
+
+	echo ######## START ########
+
+	echo --------- OP1 ---------
+	op 
+
+	* IZPIS TOKA V ZGORNJI VEJI
+	* IDQ: vRD/RD = v(2,3)/rd
+	* @ za iskanje elementa!
+*	print v(2,3)/@r_rd[r]
+*	print i(v_vdd)
+*	print v_vss#branch
+
+	let idq=-i(v_vdd)
+	let vdsq=v(3,4)
+	let vgsq=v(1,4)
+	let vout=v(3)
+	*print idq vdsq vgsq vout
+
+	* ENOSMERNA ANALIZA
+	echo --------- DC1 ---------
+	* dc para start stop korak
+	dc @r_rs[r] 1k 10k 10
+
+	* potrebujemo nove!
+	let idq=-i(v_vdd)
+	let vdsq=v(3,4)
+	let vgsq=v(1,4)
+	let vout=v(3)
+	*print idq vdsq vgsq vout
+
+	*plot idq xlabel 'RS [ohm]' ylabel 'IDQ [A]'
+
+	echo --------- DC2 ---------
+	*dc @v_vin[dc] -10 10 1
+	dc v_vin -10 10 .1
+
+	let id=-i(v_vdd)
+	let vds=v(3,4)
+	let vgs=v(1,4)
+	let vout=v(3)
+	
+	*plot id xlabel 'vih[V]' ylabel 'id[A]'
+	
+	* POVOZIMO X SKALO Z vs
+	*plot id vs vds xlabel 'vds[V]' ylabel 'id[A]'
+
+	*plot vout xlabel 'vin[V]' ylabel 'vout[V]'
+
+	echo --------- TRANSIENT ANALYS ---------
+	* tran dt stop
+	tran 1u 5m
+
+	let id=-i(v_vdd)
+	let vds=v(3,4)
+	let vgs=v(1,4)
+	let vout=v(3)
+	let vin=v(1)
+
+	* TRANZIENT NA GRAFU!
+	plot vin vout xlabel 'time' ylabel 'r:vin, g:vout'
+
+	* FOUR ANALIZA
+	*fourier   -  analiza popačenja
+	*fourier f0 signal
+	fourier 1k vout
+
+	*Kolikšna je lahko amplituda signala, da signal ni popačen?
+	*spreminjamo amplitudo sin komponente vhodnega signala 
+	
+	let vin_pp=max(vin)-min(vin)
+	let vout_pp=max(vout)-min(vout)
+	let av_abs=vout_pp/vin_pp
+	print av_abs
+
+.endc
+
+.end

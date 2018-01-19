@@ -1,0 +1,120 @@
+ Komentar, naslov, opis vezja, ...
+ 
+ * Komentar se začne z zvezdico in obsega celo vrstico
+ 
+ * Opis vezja
+ * Elementi:
+ * 1. crka: Tip elementa (r, c, l, q, m, d, v, i, ...)
+ * sledi: ime elementa
+ * sledi: vozlisca
+ * sledi: parametri
+ * Koncnice potenc 10: k-kilo, m-mili, meg-mega, u-mikro, g-giga, t-tera, n-nano
+ * Brez enot
+ 
+*-----------------------------------------------------------------------------------------------------
+	
+	r1	3	4	r=40.484k
+	r2	2	3	r=31.628k
+	r3	8	2	r=54.4k
+	rs	7	8	r=5k
+	rd	4	5	r=5k
+	
+*-----------------------------------------------------------------------------------------------------
+	
+	c1	1	2	c=100u
+	c2	0	3	c=100u
+	c3	7	0	c=100u
+	c4  5   11   c=100u
+		
+*-----------------------------------------------------------------------------------------------------
+ * v_ime        n+  n-  dc=xxx 	sin=(offset, amplituda, frekvenca)   acmag=xxx
+ 
+	vin 		1	0 	dc=0    
+	vp 			4 	0 	dc=5
+	vn 			8 	0 	dc=-5
+    vx         11   0   dc=0    sin=(0, 0.2010767, 5k)
+    
+*-----------------------------------------------------------------------------------------------------
+
+* Mosfet
+ * m_ime        drain   gate   source   bulk    ime_modela  parametri
+	m1			6		2	   7        7       testmodel   w=2u l=1u
+	m2			5		3	   6        6       testmodel   w=2u l=1u
+	
+*-----------------------------------------------------------------------------------------------------	
+
+* model: .model 	ime_modela 	tip_elementa 	parametri (kp parameter je v ucbeniku kp')	
+		 .model 	testmodel   nmos      		vto=0.8 kp=0.5m lambda=0.0001
+		 
+*-----------------------------------------------------------------------------------------------------
+
+* Kontrol blok, notri so ukazi
+* Ukazi: echo (izpiše tekst v okno simulatorja)
+*        cd (zamenja mapo)
+*        op (analiza delovne tocke)
+*        setplot
+*        destroy (all ali posamezno)
+*        display (pokaze kaj je SPICE izracunal v zadnji analizi)
+*        i(ime vira) (dostop do toka skozi vir)
+*        let (to je za delat s spremenljivkami)
+*        dc (dc analiza)
+*        plot ()
+*        tf  out vir
+		 
+*-----------------------------------------------------------------------------------------------------
+
+.control																		
+    destroy all																	
+																				
+	echo ###########################START############################
+    
+	echo --------------------------__OP1__---------------------------
+    
+	op
+			
+			let idq = v(7,8)/@rd[r]
+			let vdsq1 = v(6,7)
+			let vdsq2 = v(5,6)
+			let vgsq1 = v(2,7)
+			let vgsq2 = v(3,6)
+			let vg1	  = v(2)
+			
+			print idq vdsq1 vdsq2 vgsq1 vgsq2 vg1
+	
+	echo --------------------------_TRAN1_---------------------------
+		
+		tran 1u 5m
+			
+			let idq = v(7,8)/@rd[r]
+			let vdsq1 = v(6,7)
+			let vdsq2 = v(5,6)
+			let vgsq1 = v(2,7)
+			let vgsq2 = v(3,6)
+			
+			let vout=v(5)
+			let vin=v(1)
+			let vp=v(4)
+			let vn=v(8)
+			
+			fourier 5k vout
+			*plot vin vout xlabel 'cas' ylabel 'Vin[V] - red	  Vout[V] - green'
+			
+			let vin_pp=max(vin)-min(vin)
+			let vout_pp=max(vout)-min(vout)
+			let av=-vout_pp/vin_pp
+			
+			print av
+			
+			let iout_pp = max(i(vx))-min(i(vx))
+			let rout = vout_pp/iout_pp
+			
+			print rout
+			
+	.endc
+
+.end
+
+*-----------------------------------------------------------------------------------------------------
+
+
+* Dostop do vaj od doma: lisa.fe.uni-lj.si/vaje    Uporabnik: vaje Geslo: vajenec

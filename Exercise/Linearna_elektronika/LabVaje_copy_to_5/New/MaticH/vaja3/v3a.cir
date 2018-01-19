@@ -1,0 +1,63 @@
+Vaja 3
+    r_rs    3   8   r=5k
+    r_rd    2   6   r=5k
+    r_r1    5   2   r=40.484k
+    r_r2    5   4   r=31.628k
+    r_r3    4   3   r=54.400k
+    
+    c_c1    1   4   c=100u
+    c_c2    0   5   c=100u
+    c_c3    8   0   c=100u
+    
+    v_vin       1   0   dc=0    sin=(0,  0.15, 5k)
+    v_vplus     2   0   dc=5
+    v_vminus    3   0   dc=-5
+    
+    .model nmos1 nmos   level=1  vto=0.8 kp=1m lambda=0
+    
+    
+    m_m1    7   4   8   8   nmos1
+    m_m2    6   5   7   7   nmos1
+    
+    
+    
+    
+    .control
+        echo ########## Vaja 3 ##########
+    
+        echo .......... OP1 ..........
+        
+        op
+           
+            let idq=v(2,6) / 5000
+            let vdsq1=v(7,8)
+            let vgsq1=v(4,8)
+            let vdsq2=v(6,7)
+            let vgsq2=v(5,7)
+            let vg1=v(4)
+            print idq vdsq1 vdsq2 vgsq1 vgsq2 vg1
+            
+        
+        echo .......... TRAN1 ..........
+        
+            tran  1u  5m
+            let id=v(2,6) / 5000
+            let vdsq1=v(7,8)
+            let vgsq1=v(4,8)
+            let vdsq2=v(6,7)
+            let vgsq2=v(5,7)
+            let vin=v(1)
+            let vout=v(6)
+            
+            fourier 5k vout
+           
+            let vin_pp=max(vin) - min(vin)
+            let vout_pp=max(vout) - min(vout)
+            let av=vout_pp/vin_pp
+        
+            print av
+        
+        
+    .endc
+
+    .end

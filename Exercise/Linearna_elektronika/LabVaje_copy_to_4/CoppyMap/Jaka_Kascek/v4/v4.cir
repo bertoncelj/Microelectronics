@@ -1,0 +1,34 @@
+Komentar, naslov,.....
+
+.include models.inc
+
+vp 3 0 dc = 5
+vn 4 0 dc = -5
+vin 6 0 dc = 0	*sin=(0, 0.2, 5k)
+
+r1 3 1      r=242k
+r2 1 4      r=395k
+rsrc 6 5    r=10k
+re 2 4      r=10k
+rl 7 0      r=2k
+
+c1 5 1 c=100u
+c2 2 7 c=100u
+
+
+q1 3 1 2 BC238B  
+	
+
+.control
+    echo ############## OP ##############
+    
+    op
+    let ieq  = v(2,4)/@re[r] 
+    let vceq = v(3,2)
+    let vbeq = v(1,2)
+    let icq  = (v(4)-vceq)/@re[r]
+    
+    print ieq vceq vbeq icq
+        
+.endc
+.end

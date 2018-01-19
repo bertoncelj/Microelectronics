@@ -1,0 +1,76 @@
+Vaja 2
+
+
+* Opis vezja
+
+vin = 1 0 dc = 0 sin(0 0.014 5k)
+vp = 4 0 dc = 9
+vm = 8 0 dc = -9
+
+rsi 1 2 r=500
+r1 3 4 r=37.46k
+r2 3 8 r=150.67k
+rs 4 5 r=5.44k
+rd 6 8 r=12.56k
+rl 7 0 r=10k
+
+c1 2 3 c=100u
+c2 6 7 c=100u
+*cs 5 0 c=100u
+
+m1 6 3 5 5 testmodel w=15u l=1u
+.model testmodel pmos vto=-0.5 kp=0.55m lambda=0
+
+
+* Sim
+
+.control
+    destroy all
+
+    echo ######## START ########
+
+    echo --------- OP1 ---------
+    op
+    
+    let idq = v(4,5)/5.44k
+    let vsg = v(5,3)
+    let vsd = v(5,6)
+    let vin = v(1)
+    let vss = v(5)
+    let vdd = v(6)
+    let vgg = v(3)
+    let vout = v(7)
+    
+    print idq vsg vsd vin vss vdd vgg
+    
+    print (idq - 4.998224e-04)
+    
+    echo --------- TRN ---------
+    tran 1u 5m
+    
+    let idq = v(4,5)/5.44k
+    let vsg = v(5,3)
+    let vsd = v(5,6)
+    let vin = v(1)
+    let vss = v(5)
+    let vdd = v(6)
+    let vgg = v(3)
+    let vout = v(7)
+    
+    fourier 5k vout
+    
+    plot vgg vss vdd xlabel 'time' ylabel 'vgg, vss, vdd'
+    
+    let vgx = (max(vgg) - min(vgg))/2
+    let vsx = (max(vss) - min(vss))/2
+    let vdx = (max(vdd) - min(vdd))/2
+    
+    print vgx vsx vdx
+    
+    let av = - (max(vout) - min(vout)) / (max(vin) - min(vin))
+    
+    print av
+    
+.endc
+
+.end

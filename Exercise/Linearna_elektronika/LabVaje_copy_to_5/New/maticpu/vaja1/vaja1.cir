@@ -1,0 +1,133 @@
+Komentar, opis vezja, tole  vrstico gladko ignorira 
+
+
+
+*komentar se zacne z zvezdico (spice ignorria velike in male crke)
+
+*opis vezja (pred control block)
+
+*elementi:
+*   1.crka: tip elementa (r,c,l,q,m,d,v,i, ...)
+*   sledi ime el. (npr r1,c4 )
+*   sledi: vozlisca
+*   sledi: parametri
+*   prepoznava koncnice potenc 10: k-kilo, m-mili, meg-mega, u-mikro, g-giga, t, n, p, f,  
+*   brez enot!
+
+r_rd            2   3   r=8k
+r_rs            5   4   r=4.4k
+
+*najprej pozitivno vozl potem negativno n+ n- dc=xxx sin=(pffset, ampl, frek)  acmag=xx
+v_vin           1   0   dc=0 sin=(0,1,1k)
+v_vdd           2   0   dc=5
+v_vss           5   0   dc=-5
+
+
+*mosfet
+*   mime drain gate source bulk  ime_modela parametri
+m_m1       3    1   4   4     testmodel w=2u l=1u 
+
+
+*model: .model ime_modela tip_elementa parametri
+
+.model testmodel nmos vto=1.4 kp=0.25m lambda=0
+
+
+
+
+*VSI ukazi se pišejo v control block
+*ukazi:echo, op, setplot(pogledas analize do sedaj), display (pokaze lokalne spremenljivke), print (izpise st vrednsoti nekih spremenljivk) print v (cifra), let, dc, plot, tran, fourier, max, min, tf analiza  *tf vin vout
+        
+
+
+
+.control
+    destroy all
+    
+    echo #################### Vaja1 #######################
+    
+
+    echo ---------------------------------OP1-------------------------------------
+    op
+    
+    *IDQ: vRD/RD= v(2,3)/rd z @ poiscemo vrednost nekega elementa [parameter]
+    *print -i(v_vdd)     v(2,3)/@r_rd[r]  v_vss#branch
+
+    let idq=v(2,3)/@r_rd[r]
+    let vdsq=v(3,4)
+    let vgsq=v(1,4)
+    let vout=v(3)
+    
+    
+    print idq vdsq vgsq vout
+
+    
+    
+    *enosmerna analiza
+
+    
+    echo ------------------------DC1--------------------------------
+    *dc parameter start stop korak
+    
+    dc @r_rs[r] 1k 10k 10
+    
+    
+    let idq=-i(v_vdd)
+    let vdsq=v(3,4)
+    let vgsq=v(1,4)
+    let vout=v(3)
+    
+    
+    *plot idq xlabel ' RS [ohm] '  ylabel 'IDQ [A]' 
+
+    
+    echo ------------------------DC2-------------------------------- 
+    
+    *dc @v_vin[dc] -10 10 1 ista zadeva kot vrstica spodaj
+    dc v_vin -10 10 0.1
+    
+   
+    
+    let id=-i(v_vdd)
+    let vds=v(3,4)
+    let vgs=v(1,4)
+    let vout=v(3)
+    
+    
+    *plot id vs vds xlabel 'vds[V]' ylabel 'id[A]'
+    *plot vout  xlabel 'vin[V]' ylabel 'vout[V]'
+    
+    
+    
+    m
+    
+    echo -----------TRAN1------------------
+    
+    
+    *tran dt tstop
+    
+    tran 10u 5m
+    
+    let id=-i(v_vdd)
+    let vds=v(3,4)
+    let vgs=v(1,4)
+    let vout=v(3)
+    let vin=v(1)
+    
+    plot vin vout xlabel 'time' ylabel 'r:vin,g:vout'
+    
+    
+    *fourierova analiza popacenja za periodicne signale
+    *fourier f0 signal
+    
+    fourier 1k vout
+    
+    let vin_pp=max(vin)-min(vin)
+    let vout_pp=max(vout) - min (vout)
+    let av_abs=vout_pp/vin_pp
+    print av_abs
+    
+.endc
+
+
+.end

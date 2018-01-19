@@ -1,0 +1,84 @@
+cd I:/Documents/faks/spice/v3
+
+*===========opis vezja===============#
+	vin 1 0 dc=0 sin=(0, 0.201, 5k)
+    *za rout damo vin na 0
+    *vin 1 0 dc=0
+    
+	vp 8 0 dc=5
+	vn 3 0 dc=-5
+	
+	c1 1 2 c=100u
+	c2 0 6 c=100u
+	c3 4 0 c=100u
+	
+	r1 8 6 r= 40.484k
+	r2 6 2 r=31.628k
+	r3 2 3 r=54.4k
+	rd 8 7 r=5k
+	rs 4 3 r=5k
+	
+	m1 7 6 5 5 testmodel w=2u l=1u
+	m2 5 2 4 4 testmodel w=2u l=1u
+	
+	.model testmodel nmos vto=0.8 kp=0.5m lambda=0.0001
+	
+	*spremembe za merjenje Rout
+	*cx 7 9 c=100u
+	*vx 9 0 dc=0 sin=(0, 0.201, 5k)
+*===========\opis vezja==============#
+
+*============simulacije==============#
+	.controll
+	destroy all
+	
+		echo ##############circuit description - pass#################
+		
+		echo --------------op1--------------------
+		op
+			let idq=v(8,7)/@rd[r]
+			let vdsq1=v(7,5)
+			let vgsq1=v(6,5)
+			let vdsq2=v(5,4)
+			let vgsq2=v(2,4)
+			let vg1=v(2)
+			print idq vdsq1 vdsq2 vgsq1 vgsq2 vg1
+			
+		echo --------------tran1------------------
+		tran 1u 5m
+			let idq=v(8,7)/@rd[r]
+			let vdsq1=v(7,5)
+			let vgsq1=v(6,5)
+			let vdsq2=v(5,4)
+			let vgsq2=v(2,4)
+			
+			let vout=v(7)
+			let vin=v(1)
+			let vp=v(8)
+			let vn=v(3)
+			
+			fourier 5k vout
+			*plot vin vout xlabel 'time' ylabel ''
+			
+			let vin_pp=max(vin)-min(vin)
+			let vout_pp=max(vout)-min(vout)
+			let av=-vout_pp/vin_pp
+			
+			print av
+			
+			let iin_pp = max(i(vin))-min(i(vin))
+			let vx_pp = max(v(2,3))-min(v(2,3))
+			let Rin = vx_pp/iin_pp
+			print Rin
+			
+			*za rout, vin moramo odklopit
+			*let iout_pp = max(i(vx))-min(i(vx))
+			*let Rout = vout_pp/iout_pp
+			*print Rout
+			
+		
+	.endc
+*============\simulacije=============#
+
+
+.end

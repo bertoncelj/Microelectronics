@@ -1,0 +1,65 @@
+Vaja5
+
+*includamo tranzistor
+    .include models.inc
+
+    *AC analiza
+    
+    *upornosti
+    r_r1    1   2   r=146.6k
+    r_r2    2   0   r=75.9k
+    
+    r_re    6   0   r=1k
+    r_rc    1   4   r=1.4k
+
+    r_rl    7   0   r=10k    
+    
+    *kapacitiovnosti
+    c_c1    8    2    c=100u
+    c_c2    4    7    c=100u
+    c_ce    6    0    c=100u
+    
+    *napajalniki
+    vcc      1   0   dc=10     
+    v_vin    8   0   dc=0   sin(0, 1, 5k)
+    v_vout   7   0   dc=0 
+
+    *viri nadomestni za merjenje toka
+    v_icq1    4  10  dc=0
+    v_icq2    4  9   dc=0
+    v_ieq1    5  11  dc=0
+    
+    
+    * m_imeTran (c b e) imeModela parametri
+    q_q1    10 2 5   T2N2222 
+    q_q2    9 11 6   T2N2222
+    
+
+    .control
+    
+    destroy all
+           
+    echo _________VAJA4__________
+    echo
+            
+    echo .........NALOGA_2.........
+        
+    *naredi DC analizo
+    op
+            
+    *nastavimo vektorje ki jih iscemo
+    let icq1  = i(v_icq1)
+    let icq2  = i(v_icq2)
+    let veq1  = v(10,5)
+    let veq2  = v(9,6)
+            
+    *izpisemo vektroje
+     print icq1, icq2, veq1, veq2
+    
+    
+    echo .........NALOGA_3................
+    
+    
+    
+    .endc
+.end

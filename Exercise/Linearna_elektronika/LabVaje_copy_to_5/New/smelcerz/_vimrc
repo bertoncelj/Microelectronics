@@ -1,0 +1,49 @@
+"File encoding
+set encoding=utf-8
+
+"Color scheme
+colorscheme torte
+
+"Syntax
+syntax on
+
+"Tab indent
+set noexpandtab
+set copyindent
+set preserveindent
+set softtabstop=0
+set shiftwidth=2
+set tabstop=2
+
+"Smart indent
+set smartindent
+
+"1,2,3,4...
+set number
+
+"Mouse select
+set mouse=a
+
+"...
+"Windows GOOD options
+"...
+"No backup files
+set nobackup
+set nowritebackup
+
+"Backspace doesn't work
+set backspace=2
+
+"Auto braces
+inoremap {      {}<Left>
+inoremap {<CR>  {<CR>}<Esc>O
+inoremap {{     {
+inoremap {}     {}
+
+if has("gui_running")
+	" GUI is running or is about to start.
+	" Maximize gvim window (for an alternative on Windows, see simalt below).
+	set lines=50 columns=100
+	"Font
+	set guifont=h12:b:cANSI
+endif

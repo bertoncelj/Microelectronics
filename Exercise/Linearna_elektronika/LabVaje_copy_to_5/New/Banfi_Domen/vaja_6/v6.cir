@@ -1,0 +1,62 @@
+*sledi parametri
+    
+    *masa je vedno vzlisce 0
+    *k-kilo, m-mili, meg-mega, u-mikro
+    r_r1    2   3   r=178k
+    r_r2    2   0   r=94k
+    r_re    6   0   r=1.1k
+    r_rc    3   4   r=1.5k
+    r_rl    7   0  r=10k
+    
+    c_c1    1   2   c=100u
+    c_c2    10   7   c=100u
+    c_c3    6   0   c=100u
+    
+    *v_imevira  n+   n- dc=xx   acmag=xx    sin=(off, amp, freq)
+    v_vin    1   0   dc=0    sin=(0, 0.05, 5k)  acmag=1 
+    v_vplus  3   0   dc=10
+    v_vtok1   4   8   dc=0
+    v_vtok2   4   9   dc=0
+    v_vout    4   10  dc=0
+    
+    .include models.inc
+    *m_imeTranz d   g   s   b   incModela parametri
+    *. model imeModela tipEl parametri (kp, vto, lambda...)
+   
+    q_q1   9   2   5   T2n2222
+    q_q2   8   5   6   T2n2222 
+    
+    .control
+        destroy all
+        echo ######## Vaja5 ######
+         echo ---------OP1---------
+        *delovna tocka ukaz op
+        op
+        *spremenljivka (vektor)
+        let icq2=i(v_vtok1)
+        let icq1=i(v_vtok2)
+        let vceq1=v(9,5)
+        let vceq2=v(8,6)
+        print icq1, icq2, vceq1, vceq2
+        echo -------TRAN1-------
+        tran 0.05u 5m
+        let vin_pp = max(v(1))-min(v(1))
+        let vout_pp = max(v(7))-min(v(7))
+        let av =vout_pp/vin_pp
+        let iin_pp=max(i(v_vin))-min(i(v_vin))
+        let iout_pp=max(i(v_vout))-min(i(v_vout))
+        let ai =iout_pp/iin_pp
+        print av, ai
+        echo ---------AC1---------
+         ac  dec 10  1   100meg
+         let av=v(7)/v(1)
+        let av_db=db(av)
+        let av_ph=ph(av)
+        plot av xlabel 'f' ylabel 'Av'
+        plot av_db xlabel 'f' ylabel 'Av[db]'
+        plot av_ph xlabel 'f' ylabel 'Av[ph]'
+        let z1=v(1)/-i(v_vin)
+        let zin=abs(z1)
+        plot zin
+    .endc
+    .end

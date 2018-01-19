@@ -1,0 +1,63 @@
+2. Laboratorijska vaja
+
+*OPIS VEZJA
+
+	vin 1 0 dc=0 sin=(0, 0.0148, 5k)
+	vp 3 0 dc=9
+	vn 0 4 dc=-9
+
+	rsi 1 2 r=500
+	r1 4 3 r=37.5k
+	r2 3 5 r=150.8k
+	rs 4 6 r=5432
+	rd 7 5 r=12551.5
+	rl 8 0 r=10k
+
+	c1 2 3 c=100u
+	c2 7 8 c=100u
+	cs 6 0 c=100u
+
+	m1 7 3 6 6 testmodela w=15u l=1u 
+	.model testmodela pmos vto=-0.5 kp=0.5m lambda=0
+
+.control
+destroy all
+	echo ############DRUGAVAJA#######
+
+	echo -----------op1--------------
+
+	op
+		let idq=v(7,5)/12551
+		let vsdq=v(6,7)
+		let vsgq=v(6,3)
+		print idq vsdq vsgq
+	echo ------------tran1----------
+
+	tran 1u 5m
+	
+	let id=v(7,5)/12551
+	let vsd=v(6,7)
+	let vsgq=v(6,3)
+	let vout=v(8)
+	let vin=v(1)
+	let vss=v(6)
+	let vgg=v(3)
+	let vdd=v(7)
+
+	fourier 5k vout
+	plot vss vgg vdd xlabel 'time' ylabel 'vs, vg, vd'
+
+	let vin_pp=max(vin)-min(vin)
+	let vout_pp=max(vout)-min(vout)
+	let av=vout_pp/vin_pp
+
+	vs_pp=max(vss)-min(vss)
+	vg_pp=max(vgg)-min(vgg)
+	vd_pp=max(vdd)-min(vdd)
+
+	print av vs_pp vg_pp vd_pp
+.endc
+.end
+	
+	
+

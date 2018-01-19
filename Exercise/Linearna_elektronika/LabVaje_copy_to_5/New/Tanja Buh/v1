@@ -1,0 +1,51 @@
+ kometar, naslov...
+
+
+  *opis vezja
+  *1.crka     :tip el. (r,c,l,m -mostfet, q-bjt, v,i,...)
+  *sledi      : ime el.
+  *sledi      : vozl.
+  *sledi      :parametri
+  
+  
+  *masa: vozlisce 0
+  *k-kilo, m-mili, meg - mega, u-mikro,...
+  
+  
+  rs     4  5   r=5k
+  rd     2  3   r=5k
+  
+  *v:imevira n+ n-  dc=xx acmag=xx  sin(...)
+  
+  vin   1  0  dc=0
+  vdd   2  0  dc=5
+  vss   5  0  dc=-5
+  
+  *m imeTranzistorja  d g  s c imeModela parametri
+  * .model imeModela tipEl parametri(kp,vto, labda...)
+  
+  .model nmosTest nmos level=1  vto=1,4 kp=0.25 
+  
+  m1  3  1  4  4  nmostest  w=2u   l=1u
+  
+  
+  
+
+ *komentar
+ *ukazi: echo,
+ 
+ 
+
+  .control
+     echo  #########Vaja 1###########
+     
+     echo  .................OP1...........
+   
+  .endc
+
+
+
+
+
+
+ .end

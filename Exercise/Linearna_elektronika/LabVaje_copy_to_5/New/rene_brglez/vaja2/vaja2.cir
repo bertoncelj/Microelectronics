@@ -1,0 +1,34 @@
+VAJA 2 delovna tocka, napetostno ojacenje, popacenje
+ 
+ *kar se začne z zvezdico je komentar
+ * kar se začne s piko (.) je ukaz
+ * ukazi: echo,
+ 
+ *opis vezja
+ *1.črka    : je tip elementa (r,c,l,m(mos tranzistor),q(bipolarni *tranzistor),v,i,...)
+ *sledi     : ime el.
+ *sledi     : vozlišča
+ *sledi     :parametri
+ 
+ *masa je vedno vozlišče 0
+ *imena vseh ostalih vozlišč niso pomembna
+ *k-kilo,m-mili,meg-mega,u-mikro,...
+ *.model imeModela  tipElementa parametri(kp,vto,lambda,...)
+ 
+ r_r1
+ r2
+ rsi
+ rs
+ rd
+ rl
+
+ 
+ .control
+    echo #################################################
+    
+    
+    
+ .endc
+ 
+ 
+ .end

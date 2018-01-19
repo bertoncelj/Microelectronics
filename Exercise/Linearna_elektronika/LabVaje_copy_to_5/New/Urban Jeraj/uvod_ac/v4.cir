@@ -1,0 +1,82 @@
+ 4. Laboratorijska vaja (Komentar,naslov,....)
+
+    .include models.inc
+ 
+    *Ukazi: echo, op(delona tocka), setplot, display, print, let, dc, destroy, plot, tran, fourier, max, min
+    *-------opis vezja------------------
+	
+
+    r_re    3   0   r=1k
+	r_r1    5   2   r=178k
+	r_r2    2   0   r=95k
+	r_rl    6   0   r=10k
+   	r_rc    5   4   r=1.46k
+
+    
+    v_mer1  4   44  dc=0
+    v_mer2  4   45  dc=0
+	v_vin   1   0   dc=0    sin=(0, 0.05, 5k) acmag=1
+    v_vcc   5   0   dc=10
+	
+
+	q_q1   44   2   7   T2N2222
+	q_q2   45   7   3   T2N2222
+	
+	C1	1	2	c=100u	
+	C2	4	6	c=100u	
+    CE	3	0	c=100u	
+	
+	*------------Simulacija-----------------
+    
+    .control
+        destroy all
+    
+        echo ######### Vaja 4 #########
+        
+        
+        echo --------- OP1 ---------
+		
+		*delovna tocka
+		op
+		
+        let icq1=i(v_mer1)
+        let icq2=i(v_mer2)
+        let vceq1=v(4,7)
+        let vceq2=v(4,3)
+        print icq1 icq2 vceq1 vceq2
+        
+        echo --------- TRAN1 ---------
+        
+        * tran dt tstop --- casovna analiza (dt-CASOVNI korak, )
+        tran 1u 5m
+        
+
+        *let vx=max(v(7))-min(v(7))
+		*let ix=max(-i(v_vout))-min(-i(v_vout))
+		*let rout=vx/ix
+		*print rout
+        
+        let vin_pp=max(v(1))-min(v(1))
+        let vout_pp=max(v(6))-min(v(6))
+        let av=vout_pp/vin_pp
+        print av  
+        
+        *let iout=max(v(7)/20000)-min(v(7)/20000)
+        *let iin=max(-i(v_vin))-min(-i(v_vin))
+        *let ai=iout/iin
+        *print ai
+        
+        echo ----------- AC1 -------------
+        
+        let av=v(6)/v(1)
+   let av_db=db(av)
+   let av_ph=ph(av)
+   plot av_db xlabel 'f' ylabel 'Av[dB]'
+   plot av_ph xlabel 'f' ylabel 'Ph'
+        
+
+        
+    .endc
+
+    .end
+ 

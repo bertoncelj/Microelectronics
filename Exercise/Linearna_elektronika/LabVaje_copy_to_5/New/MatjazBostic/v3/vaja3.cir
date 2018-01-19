@@ -1,0 +1,69 @@
+Vaja linel 3 kaskodna vezava nMos
+
+vp 5 0 dc = 5
+vn 7 0 dc = -5
+*vin 8 0 dc = 0	sin=(0, 0.201, 5k)
+vin 8 0 dc = 0
+*x vklopimo za merjenje izhodne upornosti
+vx 9 0 dc = 0	sin=(0, 0.201, 5k)
+cx 4 9 c=100u
+
+r1 3 5 r=40.5k
+r2 1 3 r=31.63k
+r3 7 1 r=54.4k
+rs 6 7 r=5k
+rd 5 4 r=5k
+
+c1 8 1 c=100u
+c2 3 0 c=100u
+c3 6 0 c=100u
+
+	*m_imeTran d g s b imeModela parametri
+	*.model imeModela tipEl parametri(kp, vto, ...)
+
+.model modeln nmos kp=0.5m vto=0.8 lambda=0m
+
+m1 2 1 6 6 modeln w=2u l=1u
+m2 4 3 2 2 modeln w=2u l=1u	
+	
+
+.control
+destroy all
+    echo #### nal 3 ####
+    
+    echo ------OP1-------
+	op
+	let idq = v(5,4)/@rd[r]
+	let vdsq1 = v(2,6)
+	let vdsq2 = v(4,2)
+	let vgsq1 = v(1,6)
+	let vgsq2 = v(3,2)
+	let vg1	  = v(8)
+	
+	print idq vdsq1 vdsq2 vgsq1 vgsq2 vg1 
+	
+	echo ------TRAN1------
+	
+        *tran dt            tstop
+        *     časovni korak,konec
+    tran 1u 3m
+    fourier 5k v(4)
+	
+	plot v(8) v(4) v(6) xlabel 'time' ylabel 'vg1, vd2, vs1' 
+	*plot v(1) xlabel 'time' ylabel 'vgate[t]' 
+	*plot v(4) xlabel 'time' ylabel 'vdrain[t]'
+	*plot v(3) xlabel 'time' ylabel 'vsource[t]'
+	plot v(4) v(8) xlabel 'time' ylabel 'vout[t], vin[t]'
+
+	
+	*let vinPP = max(v(8))-min(v(8))
+    *let voutPP = max(v(4))-min(v(4))
+    *let avABS = voutPP/vinPP
+   * print avABS
+    
+
+    print max(v(9))/max(i(vx))
+
+.endc
+ 
+.end

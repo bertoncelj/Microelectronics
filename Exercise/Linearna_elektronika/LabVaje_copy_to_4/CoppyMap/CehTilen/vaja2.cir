@@ -1,0 +1,68 @@
+****************	VAJA 2		****************
+
+
+* OPIS VEZJA:
+
+r_rsi	7 8	r=500
+r_r1	1 2	r=37.5k
+r_r2	2 3	r=150.6k
+r_rd	4 3	r=12.568k
+r_rs	1 5	r=5.432k
+r_rl	6 0	r=10k
+
+v_vin	7 0	dc=0	sin(0,0.0148,5k)
+v_v+	1 0	dc=9
+v_v-	0 3	dc=9
+
+c_c1	8 2	c=100u
+c_c2	4 6	c=100u
+c_cs	5 0	c=100u
+
+.model	mosfet	pmos	vto=-0.5	kp=0.5m	lambda=0
+m_m1	4 2 5 5	mosfet	w=15u l=1u
+
+
+	.control
+		destroy all
+
+		echo ######################## LAB VAJA 2	########################
+
+		
+		echo ########################	DELOVNA TOČKA	########################
+		
+		op
+		*spremenljivke:
+		let idq=v(1,5)/@r_rs[r]
+		let vsdq=v(5,4)
+		let vsgq=v(5,2)
+				print idq vsdq vsgq
+
+
+		echo ########Transientna analiza #########
+		tran 0.5u 5m
+			let id=v(1,5)/@r_rs[r]
+			let vsd=v(5,4)
+			let vsg=v(5,2)
+			let vout=v(6)
+			let vin=v(7)
+			let vss=v(5)
+			let vgg=v(2)
+			let vdd=v(4)
+			fourier 5k vout
+			plot vss vgg vdd vout xlabel 'time' ylabel 'vs, vg, vd, vout'
+			
+			let vin_pp=max(vin)-min(vin)
+			let vout_pp=max(vout)-min(vout)
+			let av=vout_pp/vin_pp
+			
+			vss_pp=max(vss)-min(vss)
+			vgg_pp=max(vgg)-min(vgg)
+			vdd_pp=max(vdd)-min(vdd)
+			
+			print av vss_pp vgg_pp vdd_pp
+
+	.endc
+
+
+
+.end

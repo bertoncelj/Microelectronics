@@ -1,0 +1,32 @@
+4 vaja-izhodna upornost
+
+.include models.inc
+vp 3 0 dc = 5
+vn 4 0 dc = -5
+vin 6 0 dc = 0	
+
+r1 3 1      r=242k
+r2 1 4      r=395k
+rsrc 6 5    r=10k
+re 2 4      r=10k
+vout 7 0 sin = (0 0.2 5k)
+
+
+c1 5 1 c=100u
+c2 2 7 c=100u
+
+q1 3 1 2 BC238B  
+
+.control
+tran 1u 3m
+let ix = max(i(vout)) - min(i(vout))
+let vx = max(v(7))-min(v(7))
+let rout = vx/ix
+print rout
+
+    tran 1u 5m
+    fourier 5k v(7)
+
+
+.endc
+.end

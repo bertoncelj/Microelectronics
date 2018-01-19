@@ -1,0 +1,17 @@
+ Komentar,naslov,opis..
+ 
+ 
+ *komentar se zacne zvezdico
+ *ukazi:echo
+ .control
+ echo Start
+ 
+ 
+ 
+ 
+ 
+ .endc
+ 
+ 
+ 
+ .end

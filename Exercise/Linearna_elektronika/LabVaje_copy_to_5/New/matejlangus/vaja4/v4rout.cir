@@ -1,0 +1,47 @@
+vaja 3
+
+
+
+	vin 	1 0 dc=0 
+	vp 		5 0 dc=5
+	vn 		4 0 dc=-5
+	vtest	7 0 dc=0 sin=(0, 0.0201, 5k)
+
+	r1 		3 5 r=242k
+	r2 		3 4 r=395k
+	re		4 6 r=10k
+	*rl		7 0 r=2.000k
+	rsrc	1 2 r=10.000k
+	*rl		7 0 r=20.000k
+	c1 		2 3 c=100u
+	c2 		6 7 c=100u
+	
+	
+	
+	q (5 3 6 )   BC238B 
+	
+.MODEL BC238B NPN IS=1.8E-14 ISE=5.0E-14 NF=.9955 NE=1.46 BF=400 BR=35.5
++ IKF=.14 IKR=.03 ISC=1.72E-13 NC=1.27 NR=1.005 RB=.56 RE=.6 RC=.25 VAF=80
++ VAR=12.5 CJE=13E-12 TF=.64E-9 CJC=4E-12 TR=50.72E-9 VJC=.54 MJC=.33
+
+	
+
+
+
+.control
+	destroy all
+
+
+	tran 1u 5m
+			
+			
+	
+	
+	let idpp=max(i(vtest))-min(i(vtest))
+    let vg1pp=max(v(7))-min(v(7))
+    let rout=vg1pp/idpp
+    print rout
+	
+	
+.endc
+.end

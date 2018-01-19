@@ -1,0 +1,110 @@
+ Komentar, naslov, opis vezja, ...
+ 
+ * Komentar se začne z zvezdico in obsega celo vrstico
+ 
+ * Opis vezja
+ * Elementi:
+ * 1. crka: Tip elementa (r, c, l, q, m, d, v, i, ...)
+ * sledi: ime elementa
+ * sledi: vozlisca
+ * sledi: parametri
+ * Koncnice potenc 10: k-kilo, m-mili, meg-mega, u-mikro, g-giga, t-tera, n-nano
+ * Brez enot
+ 
+*-----------------------------------------------------------------------------------------------------
+	
+	rsi 1	2	r=500
+	r1	4	3	r=37.5k
+	r2	3	5	r=150.6k
+	rs	4	6	r=5.432k
+	rd	7	5	r=12.568k
+	rl	8	0	r=10k
+	
+*-----------------------------------------------------------------------------------------------------
+	
+	c1	2	3	c=100u
+	c2	7	8	c=100u
+	*cs	6	0	c=100u
+	*Peta naloga: cs se spremeni na c=0
+	
+*-----------------------------------------------------------------------------------------------------
+ * v_ime        n+  n-  dc=xxx 	sin=(offset, amplituda, frekvenca)   acmag=xxx
+ 
+	vin 		1	0 	dc=0 	sin=(0, 0.0148, 5k)
+	vp 			4 	0 	dc=9
+	vn 			5 	0 	dc=-9
+
+*-----------------------------------------------------------------------------------------------------
+
+* Mosfet
+ * m_ime        drain   gate   source   bulk    ime_modela  parametri
+	m1			7		3	   6        6       testmodel   w=15u l=1u
+	
+*-----------------------------------------------------------------------------------------------------	
+
+* model: .model 	ime_modela 	tip_elementa 	parametri (kp parameter je v ucbeniku kp')	
+		 .model 	testmodel   pmos      		vto=-0.5 kp=0.5m lambda=0
+												*za 3. nalogo se kp poveča na 0.55m
+		 
+*-----------------------------------------------------------------------------------------------------
+
+* Kontrol blok, notri so ukazi
+* Ukazi: echo (izpiše tekst v okno simulatorja)
+*        cd (zamenja mapo)
+*        op (analiza delovne tocke)
+*        setplot
+*        destroy (all ali posamezno)
+*        display (pokaze kaj je SPICE izracunal v zadnji analizi)
+*        i(ime vira) (dostop do toka skozi vir)
+*        let (to je za delat s spremenljivkami)
+*        dc (dc analiza)
+*        plot ()
+		 
+*-----------------------------------------------------------------------------------------------------
+
+.control																		
+    destroy all																	
+																				
+	echo ###########################START############################
+    
+	echo --------------------------__OP1__---------------------------
+    
+	op
+			let idq=v(7,5)/@rd[r]
+			let vsdq=v(6,7)
+			let vsgq=v(6,3)
+			print idq vsdq vsgq
+	
+	echo --------------------------_TRAN1_---------------------------
+		
+		tran 1u 5m
+			
+			let id=v(7,5)/@rd[r]
+			let vsd=v(6,7)
+			let vsg=v(6,3)
+			let vout=v(8)
+			let vin=v(1)
+			let vss=v(6)
+			let vgg=v(3)
+			let vdd=v(7)
+			fourier 5k vout
+			plot vss vgg vdd xlabel 'time' ylabel 'vs, vg, vd'
+			
+			let vin_pp=max(vin)-min(vin)
+			let vout_pp=max(vout)-min(vout)
+			let av=vout_pp/vin_pp
+			
+			vs_pp=max(vss)-min(vss)
+			vg_pp=max(vgg)-min(vgg)
+			vd_pp=max(vdd)-min(vdd)
+			
+			plot vin vout
+			print av vs_pp vg_pp vd_pp
+	.endc
+
+.end
+
+*-----------------------------------------------------------------------------------------------------
+
+
+* Dostop do vaj od doma: lisa.fe.uni-lj.si/vaje    Uporabnik: vaje Geslo: vajenec

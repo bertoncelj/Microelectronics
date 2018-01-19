@@ -1,0 +1,60 @@
+vaja 3
+
+
+
+	vin 	1 0 dc=0 sin=(0, 0.201, 5k)
+	vp 		4 0 dc=5
+	vn 		5 0 dc=-5
+
+	*rsi 	1 2 r=500
+	r1 		2 4 r=40.484k
+	r2 		2 3 r=31.628k
+	r3		3 5 r=54.400k
+	rd		4 6 r=5.000k
+	rs		5 8 r=5.000k
+
+	c1 		1 3 c=100u
+	c2 		0 2 c=100u
+	cs		8 0 c=100u
+	
+	
+	m1 7 3 8 8 testmodel
+	m2 6 2 7 7 testmodel
+	*.model testmodel pmos vto=-0.5 kp=0.5m lambda=0
+	.model testmodel nmos vto=0.8 kp=1.m lambda=0.0001
+
+	
+
+
+
+.control
+	destroy all
+
+
+    echo ------------------OP--------------------------------
+    op
+	
+	let idq=v(8,5)/@rs[r] 
+	let vdsq1=v(7,8)
+	let vgsq1=v(3,8)
+	let vdsq2=v(6,7)
+	let vgsq2=v(2,7)
+	let vg1=v(3)
+	
+	print idq vdsq1 vgsq1 vdsq2 vgsq2 vg1
+	
+	tran 1u 5m
+			let id=v(8,5)/@rs[r] 
+			let vout=v(6)
+			let vin=v(1)
+			
+	let vin_pp=max(vin)-min(vin)
+	let vout_pp=max(vout)-min(vout)
+	let av=vout_pp/vin_pp
+
+	print  av
+	
+	fourier 5k vout
+
+.endc
+.end

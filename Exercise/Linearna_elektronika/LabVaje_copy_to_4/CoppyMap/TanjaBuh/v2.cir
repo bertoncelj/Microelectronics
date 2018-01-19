@@ -1,0 +1,173 @@
+ 
+  *****Labvaja2******
+
+
+  *opis vezja
+  *1.crka     :tip el. (r,c,l,m -mostfet, q-bjt, v,i,...)
+  *sledi      : ime el.
+  *sledi      : vozl.
+  *sledi      :parametri
+  
+  
+  *masa: vozlisce 0
+  *k-kilo, m-mili, meg - mega, u-mikro,...
+  
+  
+  rs     (4  9)   r=5.449k
+  rd     (6  7)   r=12.551k
+  r1     (4  3)   r=37.464k
+  r2     (3  7)   r=150.585k
+  rsi    (1  2)   r=500
+  rl     (8  0)   r=10k
+  
+  cl     (2  3)   c=100u
+  c2     (6  8)   c=100u
+  c3     (5  0)   c=100u
+  
+  
+  *v:imevira n+ n-  dc=xx acmag=xx  sin(offset, amplituda, frekvenca) 
+  
+  vin   (1  0)  dc=0   sin=( 0, 0.0148, 5k )
+  vdd   (7  0)  dc=-9
+  vss   (4  0)  dc=9
+  vxx   (9  5)  dc=0
+  
+  
+  *m imeTranzistorja  d g  s c imeModela parametri
+  * .model imeModela tipEl parametri(kp,vto, labda...)
+  
+  .model pmosTest pmos level=1  vto=-0.5 kp=0.5m
+  .model pmosTest0 pmos level=1  vto=-0.5 kp=0.55m
+  
+  m1  (6  3  5  5)  pmostest w=15   l=1
+  
+  
+  
+
+ *komentar
+ *ukazi: echo, op, setplot, display, print, let ,dc, destroy, plot, tran, fourier, max, min, sqrt
+ 
+ 
+
+  .control
+     destroy all
+    echo  ################################Vaja 2##################################
+     
+     
+     echo  .................................OP1.....................................
+     *delovna tocka
+     op
+     
+     * print v(1), print v(2), print all, print vdd#branch,...
+     
+     
+     
+     
+     *spremenljivke (vektorji)
+     let idq=i(vxx)
+     
+     print idq
+     let vsdq=v(5,6)
+     let vsgq=v(5,3)
+     let vout=v(8)
+     print vsdq vsgq vout
+     
+     
+    * echo .............. DC2..............
+     dc vin -200 200 0.1
+     
+     let id= i(vxx)
+     let vsd=v(5,6)
+     let vsg=v(5,3)
+     let vout=v(8)
+     
+     
+     ** popraviti defoul scale pisemo vektor vs drugi vektor na x i y osi
+     
+     *plot id vs vsd xlabel 'vsd[V]' ylabel 'id[A]'
+     
+     
+    
+     
+      echo .............. TRAN1.............
+     *tran dt tstop
+     
+     tran 0.5u 1m
+     
+     let id= i(vxx)
+     let vsd=v(5,6)
+     let vsg=v(5,3)
+     let vout=v(8)
+     let vin= v(1)
+     
+     let vss=v(5)
+     let vg=v(3)
+     let vd=v(6)
+     
+     
+     
+     
+     
+     
+    
+     
+     plot v(1) vss xlabel 'time' ylabel 'r:vin(t), g:vs(t)'
+     plot v(1) vg xlabel 'time' ylabel 'r:vin(t), g:vg(t)'
+     plot v(1) vd xlabel 'time' ylabel 'r:vin(t), g:vd(t)'
+     
+     *plot vout vs vin xlabel 'vin' ylabel 'r:vout'
+     
+    plot v(1) vout vss vg vd  xlabel 'time' ylabel 'r:vin(t), g:vout(t), b:vs(t), g:vg(t), k:vd(t)'
+    
+      
+      echo .............. TRAN2.............
+     *tran dt tstop
+     
+     tran 0.5u 1m
+     
+     let id= i(vxx)
+     let vsd=v(5,6)
+     let vsg=v(5,3)
+     let vout=v(8)
+     let vin= v(1)
+     
+     let vss=v(5)
+     let vg=v(3)
+     let vd=v(6)
+     
+     
+     *fourier -popacenje
+     *fourier f0 signal
+     
+     
+     fourier 5k vout
+     
+     
+     
+     let vin_pp= max(v(1))-min(v(1))
+     let vout_pp= max(v(8))-min(v(8))
+     let av_abs=vout_pp/vin_pp
+     
+     print av_abs
+   
+     
+     
+     
+     
+     
+   
+   
+   
+     
+     
+     
+     
+    
+  .endc
+
+
+
+
+
+
+ .end

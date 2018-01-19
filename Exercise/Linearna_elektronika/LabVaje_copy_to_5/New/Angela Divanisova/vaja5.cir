@@ -1,0 +1,85 @@
+vaja 5 linel Darlington-ov par
+
+vcc  3  0   dc = 10
+vin  1  0   dc = 0	  sin=(0, 0.002, 5k), acmag=1
+v1   4  5   dc=0      
+v2   4  7   dc=0        
+v3   4  10  dc=0         
+v4   2  11  dc=0          
+
+r1   3  2   r=178k
+r2   2  0   r=95k
+rc   3  4   r=1.5k
+re   8  0   r=1.1k
+rl   9  0   r=10k
+
+c1   2  1   c=100u
+c2   10 9   c=100u
+ce   8  0   c=100u
+
+.include models.inc
+Q1 (5 11 6) t2n2222 
+Q2 (7 6 8) t2n2222 
+*.model T2n2222 NPN BF=100
+
+.control
+destroy all
+	echo ##### VAJA 5 #####
+	
+	echo --------OP1--------
+		op
+		let icq1 =i(v1)
+		let vceq1 = v(5,6)
+		let icq2 = i(v2)
+		let vceq2 = v(7,8)
+
+		print icq1 vceq1 icq2 vceq2
+
+	echo -------tran1-------
+		tran 1u 1m
+
+		plot v(9) v(1)
+
+		fourier 5k v(9)
+
+		
+		let icq1=i(v1)
+		let icq2=i(v2)
+		
+		*vhodni tok
+		let i1=i(vin)
+		
+		*izhodni tok
+		let i2=i(v3)
+		
+		let i1pp=max(i1)-min(i1)
+		let i2pp=max(i2)-min(i2)
+		
+		let Ai=i2pp/i1pp
+	
+		let vin=v(1)
+		let i1=i(vin)
+		let i1pp=max(i1)-min(i1)
+		let vin_pp=max(v(1))-min(v(1))
+		let vout_pp=max(v(9))-min(v(9))
+		let av_abs=vout_pp/vin_pp
+		let ZIN=vin_pp/i1pp
+		
+		print av_abs Ai ZIN
+		
+	echo *******
+	
+		
+		ac dec 10 1 100meg
+		let av=v(9)/v(1)
+        let av_db=db(av)
+        let av_ph=ph(av)
+    
+        *Bodeyev diagram
+        plot av_db xlabel 'f' ylabel 'Av[dB]'
+        plot av_ph xlabel 'f' ylabel 'faza'
+
+		print max(av_db) 
+
+.endc
+.end

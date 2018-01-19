@@ -1,0 +1,92 @@
+ vaja 4 linel emitorski sledilnik
+
+vp  4  0  dc = 5
+vn  5  0  dc = -5
+
+*Vin izklopis sin=(0, 0, 0) in vpklopis vtest za merjenje Rout
+vin 1  0  dc = 0	 sin=(0, 0, 0)
+vtest 7 0 dc = 0        sin=(0, 0.1, 5k)
+
+r1  4  2  r= 242k
+r2  2  5  r=395k
+re  3  5  r=10k
+rs  1  8  r=10k
+*zakomentiras prvi pa potem drugi RL za razmerje Av
+*rl  6  0  r=2k
+rl 6  0  r=0
+
+c1  8  2  c=100u
+c2  3  6  c=100u
+*dodatni kondenzator c3 za merjenje Rout
+c3  7  6  c=100u
+
+Q1 (4 2 3) bc238b
+*.model bc238b NPN (bf=150)
+.include models.inc
+
+.control
+destroy all
+	echo ##### VAJA 4 #####
+
+	echo --------OP1--------
+		op
+		let icq = v(3,5)/@re[r]
+		let vceq = v(4,3)
+		let vbeq = v(2,3)	
+
+		print icq vceq vbeq
+
+	echo --------TRAN1--------
+        	tran 0.05u 1m
+        	fourier 5k v(6)
+		plot v(6) v(2) xlabel 'time' ylabel 'vout[t], vin[t]'
+		let vinPP = max(v(2))-min(v(2))
+       		let voutPP = max(v(6))-min(v(6))
+        	let avABS = voutPP/vinPP
+        	print avABS
+	
+
+    echo .............. TRAN3................
+   
+     tran 0.05u 1m
+     
+     let vgg_v= max(v(7))-min(v(7))
+     let ig= max(i(vtest))-min(i(vtest))
+     let rout=vgg_v/ig
+     
+     print rout
+     
+     
+     echo .............. TRAN4................
+   
+     tran 0.05u 1m
+     
+     let vgg_o= max(v(6))-min(v(6))
+     let vgg_i= max(v(8))-min(v(8))
+     
+     let Avmin = vgg_o/vgg_i
+     
+     print Avmin
+     
+     echo .............. TRAN5................
+   
+     tran 0.05u 1m
+     
+     let Avo= max(v(6))-min(v(6))
+     let Avi= max(v(8))-min(v(8))
+     
+     let Aio= (max(v(6))-min(v(6)))/20k
+     let Aii=  max(i(vin))-min(i(vin))
+     
+     let Av= Avo/Avi
+     let Ai= Aio/Aii
+     
+     
+     print Av Ai
+     
+
+	
+.endc
+.end
+	
+	

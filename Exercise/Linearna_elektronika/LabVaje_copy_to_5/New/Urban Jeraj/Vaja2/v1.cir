@@ -1,0 +1,93 @@
+ Komentar, naslov, Vaja1
+*Opis vezja       
+ *_ 1.crka : tip elementa(r,c,l,m - mosfet, q -bjt, v,i)
+ *sledi    : ime elementa 
+ *sledi    : vozlisca 
+ *sledi    : parametri
+ 
+ *k-kilo, m-mili, meg- mega, u - mikro
+ 
+ 
+ 
+ 
+ 
+ r_rs   4   5  r=4.4k
+ r_rd   2   3  r=8k
+ 
+ 
+ * v_imevira n+ n- dc=xx acmag=xx sin=(offset, ampl, freq)
+ v_vin  1   0   dc=0  sin=(0, 1.33, 1k)
+ v_vdd  2   0   dc=5
+ v_vss  5   0   dc=-5
+ 
+ 
+ *m_imeTran d g s b imeModela parametri
+ * .model imeModela tipEl parametri(kp,vto,lambda.....)
+ 
+ .model nmosTest nmos level=1 vto=1.4 kp=0.25m 
+ m_ml   3   1   4   4 nmosTest w=2u l=1u
+ 
+ *komentar
+ *ukazi: echo, op, setplot, display ali let, print, let, dc, destroy, plot, tran, fourier
+ 
+ .control
+    destroy all
+    echo ####### Vaja 1 #########
+ 
+    echo -------- OP1 ---------- 
+    *Delovna tocka
+    op 
+    
+    *print v(1) v(2) v_vin#branch i(v_vdd)
+    *print all
+   
+   *tok skozi tranzistor
+   print -i(v_vdd) i(v_vss) v(2,3)/@r_rd[r]
+    *spremenljivke (vektorji)
+    let idq=-i(v_vdd)
+    let vdsq=v(3,4)
+    let vgsq=v(1,4)
+    let vout=v(3)
+    print idq vdsq vgsq vout
+    
+    echo -------- DC1 ---------- 
+    * enosmerna analiza
+    * dc param start stop korak
+    dc @r_rs[r] 1k 10k 10
+ 
+    *plot -i(v_vdd) xlabel 'RS[ohm]' ylabel 'IDQ[A]'
+    
+    
+    echo ----------DC2-----------
+    dc @v_vin -10 10 0.1
+    
+        let idq=-i(v_vdd)
+    let id=-i(v_vdd)
+    let vds=v(3,4)
+    let vgs=v(1,4)
+    let vout=v(3)
+    
+     
+    *plot id vs vds xlabel 'Vds[V]' ylabel 'Id[A]'
+    *plot vout  xlabel 'Vin[V]' ylabel 'Vout[V]'
+    
+    echo ---------TRAN1-----------
+    *tran dt tstop (dt - korak, tstop - čas analize)
+    tran 10u 5m 
+    let idq=-i(v_vdd)
+    let vdsq=v(3,4)
+    let vgsq=v(1,4)
+    let vout=v(3)
+    
+    plot v(1) vout xlabel 'time' ylabel 'vin(t), vout(t)'
+    *fourier - popacenje
+    *fourier f0 signal
+    fourier 1k vout
+    
+    let vin_pp=max(v(1))-min(v(1))
+    let vout_pp=max(v(3))-min(v(3))
+    let av=vout_pp/vin_pp
+    print av
+ .endc
+                 
+ .end

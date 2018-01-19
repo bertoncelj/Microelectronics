@@ -1,0 +1,57 @@
+komentar
+vp = 1 0 dc=5
+vn = 5 0 dc=-5
+vin = 4 0 dc=0 sin=(0 0.195 5k)
+vmer = 4 10 dc=0
+
+
+
+r1 = 1 2 r=40.5k
+r2 = 2 3 r=31.6k
+r3 = 3 5 r=54.4k
+
+rd = 1 8 r=5k
+rs = 6 5 r=5k
+
+c1 = 10 3 c=100u
+c2 = 2 0 c=100u
+c3 = 6 0 c=100u
+
+.model mosn nmos kp=0.5m vto=0.8 lambda=0.1m
+
+m1 8 2 7 7 mosn w=2u l=1u 
+m2 7 3 6 6 mosn w=2u l=1u
+
+.control
+destroy all
+op
+echo ######### op #######
+let idq = v(1,8)/@rs[r]
+let vdsq1 = v(8,7)
+let vdsq2 = v(7,6)
+let vgsq1 = v(2,7)
+let vgsq2 = v(3,6)
+let vg1 = v(3)
+print idq vdsq1 vdsq2 vgsq1 vgsq2 vg1
+
+echo '------------------------tranzientna------------------'
+tran 1u 5m 
+let vout = v(8)
+let vin = v(4)
+
+
+
+let vin_pp=max(vin)-min(vin)
+let vout_pp=max(vout)-min(vout)
+let rin = vin_pp/(max(i(vmer))-min(i(vmer)))
+let rout = vout_pp/((max(v(1,8))-min(v(1,8)))/@rd[r])
+let ABSav = vout_pp/vin_pp
+plot vin vout xlabel 't' ylabel 'r:vin, g:vout'
+print ABSav rin rout
+echo '---------------------popacenje---------------------'
+fourier 5k vout
+
+
+.endc
+
+.end

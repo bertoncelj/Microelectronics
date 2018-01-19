@@ -1,0 +1,81 @@
+﻿Vaja 4
+
+vp 4 0 dc = 5
+vn 5 0 dc = -5
+*vin 1 0 dc = 0 sin = (0, 0.5, 5k)
+vin 1 0 dc = 0	sin = (0, 0, 5k)
+vtest 7 0 dc = 0 sin = (0, 1, 5k)
+
+rsrc 1 2 r = 10k
+r1 3 4 r = 242k
+r2 3 5 r = 395k
+re 5 6 r = 10k
+rl 7 0 r = 2k
+*rl 7 0 r = 20k
+
+c1 2 3 c = 100u
+c2 6 7 c = 100u
+
+*q_q1 c b e model
+*.include models.inc
+q_q1  4 3 6 BC238B
+.MODEL BC238B NPN IS=1.8E-14 ISE=5.0E-14 NF=.9955 NE=1.46 BF=400 BR=35.5
++ IKF=.14 IKR=.03 ISC=1.72E-13 NC=1.27 NR=1.005 RB=.56 RE=.6 RC=.25 VAF=80
++ VAR=12.5 CJE=13E-12 TF=.64E-9 CJC=4E-12 TR=50.72E-9 VJC=.54 MJC=.33
+
+.control
+	destroy all
+
+	echo ------OP1-------
+	op
+	let ieq = v(6,5)/@re[r]
+	let icq = v(6,5)/@re[r]*(149/150)
+	let vceq = v(4,6)
+	let vbeq = v(3,6)
+	
+	print ieq icq vceq vbeq
+	
+
+	echo ------TRAN1------
+    tran 1u 5m
+    	
+	let ieq = v(6,5)/@re[r]
+	let icq = v(6,5)/@re[r]*(149/150)
+	let vceq = v(4,6)
+	let vbeq = v(3,6)
+	let vout = v(7)
+	let vin = v(1)
+	
+   	*fourier 5k vout
+
+	*izhodna upornost
+	let vv = v(7)
+
+	let ii = i(vtest)
+
+	let iipp = max(ii) - min (ii)
+
+	let vvpp = max(vv) - min(vv)
+	let rout = vvpp/iipp
+
+	*print rout
+	*plot vv ii
+	*plot vin v(7)
+
+	let vinpp = max(vin)-min(vin)
+	let voutpp = max(vout)-min(vout)
+	let av = voutpp/vinpp
+	print av
+	let ans = 8.708423/9.25503
+	print ans
+
+	let iin = v(1,2)/@rsrc[r]
+	let iiout = v(7)/@rl[r]
+	let iinpp = max(iin) - min(iin)
+	let ioutpp = max(iiout) - min(iiout)
+	let ai = ioutpp/iinpp
+	print ai
+	
+.endc
+ 
+.end

@@ -1,0 +1,127 @@
+Prva vrstica je vedo komentar, naslov, opis vezja, ...
+
+* komentar .neki je ukaz simulatorju
+
+* opis vezja pred control block
+* elementi:
+*   1.crka: tip el. (r,c,l,q,m,d,v,i,...)
+*   sledi: ime el.
+*   sledi: vozlisca
+*   sledijo: parametri (upornost, kapacitivnost, ...)
+
+* koncnice potenc 10: k-kilo, m-mili, meg-mega (spice ignorira velike crke), u-mikro, g, t, n, p, f
+* brez enot
+
+r_rd    2   3   r=8k
+r_rs    4   5   r=4.4k
+
+
+*v_ime  n+  n-  dc=xxx sin=(offset, ampl, freq) acmag=xxx
+v_vin   1   0   dc=0    sin=(0, 1, 1k)
+v_vdd   2   0   dc=5
+v_vss   5   0   dc=-5
+
+*mosfet
+* mime drain gate source bulk(substrat) ime_modela parametri
+m_m1    3   1   4   4   testmodel   w=2m l=1m
+
+*model: .model ime_modela tip_elementa parametri (Kp parameter v spice je le k' (Kp = 1/2 * k' * W/L))
+.model testmodel nmos vto=1.4 kp=0.25m
+
+
+* control block -> ukazi simulatorju
+* ukazi: echo, op, setplot, destroy, display, print, let, plot, tran, max, min
+let vin_pp=max(vin)-min(vin)
+.control
+    destroy all
+    echo ---------- VAJA 1 ----------
+    echo ----------- OP 1 -----------
+    * op: operating point
+    op
+    display
+    
+    *IDQ: vRD/RD = v(2,3)/rd
+    *print -i(v_vdd) v(2,3)/@r_rd[r] v_vss#branch
+    
+    let idq=-i(v_vdd)
+    let vdsq=v(3,4)
+    let vgsq=v(1,4)
+    let vout=v(3)
+    
+    print idq vdsq vgsq vout
+    
+    * enosmerna analiza
+    echo ------------- DC 1 ---------------
+    * dc paramater_ki_ga_zelis_spreminjat start stop korak
+    dc @r_rs[r] 1k 10k 10
+    
+    let idq=-i(v_vdd)
+    let vdsq=v(3,4)
+    let vgsq=v(1,4)
+    let vout=v(3)
+    
+    plot idq xlabel 'RS[ohm]' ylabel 'IDQ[A]'
+    
+    echo ------------- DC 2 ---------------
+    *dc @v_vin[dc] -10 10 1
+    dc v_vin -10 10 0.1
+    
+    let id=-i(v_vdd)
+    let vds=v(3,4)
+    let vgs=v(1,4)
+    let vout=v(3)
+    
+    plot id vs vds xlabel 'vds[V]' ylabel 'id[A]'
+    plot vout vs sweep xlabel 'vin[V]' ylabel 'vout[V]'
+    
+    *pazi dc in op analize odstranijo vse kondenzatorje iz vezja
+    
+    echo ------------- TRAN 1 ---------------------
+    * tran dt tstop
+    tran 1u 5m
+    
+    let id=-i(v_vdd)
+    let vds=v(3,4)
+    let vgs=v(1,4)
+    let vout=v(3)
+    let vin=v(1)
+    
+    plot v(1) vout xlabel 'time' ylabel 'r:vin, g:vout'
+    
+    *fourier - analiza popačenja
+    *fourier f0 signal
+    fourier 1k vout
+    
+    let vin_pp=max(vin)-min(vin)
+    let vout_pp=max(vout)-min(vout)
+    let av_abs=vout_pp/vin_pp
+    print av
+    
+.endc
+.end
+
+*vime#branch (spice vedno zmeri tok skozi vsak v vir (tok v + sponko vira).. npr. zanima te tok skoz diodo -> vklopis dc=0 vir in ga dobis)
+
+echo '-----------------tran2--------------------'
+  let @rl[r] = 20k
+  tran 1u 1m
+  let vout = v(7)
+  let vin = v(1)
+  
+  let i_in= i(vtest1)
+  let i_out= v(7)/@rl[r]
+  
+  let iout_pp = max(i_out) - min(i_out)
+  let iin_pp = max(i_in) - min(i_in)
+  let ai= iout_pp/iin_pp
+  print iout_pp iin_pp ai
+  
+  let vout_pp= max(vout) - min(vout)
+  let vin_pp = max(vin) - min(vin)
+  let avmax = vout_pp/vin_pp
+  print avmax
+  
+  let avv= tran1.avmin/avmax
+  print avv
+  
+  fourier 5k vout

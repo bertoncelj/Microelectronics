@@ -1,0 +1,68 @@
+Vaja4
+
+.include ../include/models.inc
+
+vin	1 0	dc=0 sin=(0 .5 5k)
+vp	4 0	dc=5
+vn	0 5	dc=5
+vicq	4 8	dc=0
+
+c1	2 3	c=100u
+c2	6 7	c=100u
+
+rs	1 2	r=10k
+r1	4 3	r=242.5k
+r2	3 5	r=401.6k
+re	6 5	r=10k
+
+q1	8 3 6	bc238b
+
+rload	7 0	r=2k
+
+
+
+.control
+destroy all
+
+echo ----OP----
+***************OP***************
+op
+let icq = i(vicq)
+let vceq = @vp[dc]-v(6)
+let vbeq = v(3,6)
+
+print icq
+print vceq
+print vbeq
+
+***************amplituda signala***************
+*echo ----THD <= 2%----
+let thdd = 3
+*while thdd ge 2 
+	tran .1u 400u
+	fourier 5k v(7)
+
+let vopp = max(v(7)) - min(v(7))
+let vipp = 2 * @vin[sin][1]
+let av2k = vopp/vipp
+print av2k
+
+let @rload[r]=20k
+tran .1u 400u
+let vopp = max(v(7)) - min(v(7))
+let vipp = 2 * @vin[sin][1]
+let av20k = vopp/vipp
+print av20k
+let dif = 1 - tran1.av2k/av20k
+print dif
+echo ------
+
+let iopp = max(v(7)/@rload[r]) - min(v(7)/@rload[r])
+let iipp = max(i(vin)) - min(i(vin))
+let ai20k = iopp/iipp
+print ai20k
+
+	
+.endc
+
+.end

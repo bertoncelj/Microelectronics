@@ -1,0 +1,73 @@
+vaja 4 linel emitorski sledilnik
+
+vp  4  0  dc = 5
+vn  5  0  dc = -5
+*Vin izklopis sin=(0, 0, 0) in vpklopis vtest za merjenje Rout
+vin 1  0  dc = 0	 sin=(0, 0.1, 5k)
+*vtest 7 0 dc = 0        sin=(0, 0.1, 5k)
+
+r1  4  2  r=242k
+r2  2  5  r=395k
+re  3  5  r=10k
+rs  1  8  r=10k
+*zakomentiras prvi pa potem drugi RL za razmerje Av
+rl  6  0  r=2k
+*rl 6  0  r=20k
+
+c1  8  2  c=100u
+c2  3  6  c=100u
+*dodatni kondenzator c3 za merjenje Rout
+*c3  7  6  c=100u
+
+.include models.inc
+Q1 (4 2 3) bc238b
+*.model bc238b NPN (bf=150)
+
+.control
+destroy all
+	echo ##### VAJA 4 #####
+
+	echo --------OP1--------
+		op
+		let icq = v(3,5)/@re[r]
+		let vceq = v(4,3)
+		let vbeq = v(2,3)	
+
+		print icq vceq vbeq
+
+	echo --------TRAN1--------
+        	tran 0.05u 1m
+        	fourier 5k v(6)
+		plot v(6) v(1) xlabel 'time' ylabel 'vout[t], vin[t]'
+		let vinPP = max(v(1))-min(v(1))
+       		let voutPP = max(v(6))-min(v(6))
+        	let avABS = voutPP/vinPP
+        	print avABS
+    		
+    		
+    	echo --------TRAN2--------	
+     		tran 0.05u 1m
+
+     		*izhodna upornost
+
+     		let vgg_v= max(v(7))-min(v(7))
+     		let ig= max(i(vtest))-min(i(vtest))
+     		let rout=vgg_v/ig
+     
+     		print rout
+	
+
+	echo --------TRAN3--------
+        	tran 0.05u 1m
+        	fourier 5k v(6)
+		
+		*tokovno ojacenje
+
+            let Ai1 = max(i(vin))-min(i(vin))
+       		let Ai0 =(max(v(6))-min(v(6)))/20k
+        	let aiABS = Ai0/Ai1
+        	print aiABS
+.endc
+.end
+	
+	

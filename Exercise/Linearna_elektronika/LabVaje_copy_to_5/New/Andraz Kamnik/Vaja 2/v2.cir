@@ -1,0 +1,95 @@
+ 
+ *Komentar,naslov,program ga ne uposteva
+ 
+ 
+
+ r_rs   4  6  r=5.432k
+ r_rd   7  5  r=12.568k
+ r_r1   4  3  r=37.5k
+ r_r2   3  5  r=150.6k
+ r_rsi  1  2  r=500
+ r_rl   8  0  r=10k
+
+ 
+ v_vin  1  0  dc=0  sin=(0, 0.0150, 5k)
+ v_vp   4  0  dc=9
+ v_vn   5  0  dc=-9
+ 
+ 
+ c_c1   2  3  c=100u  
+ c_c2   7  8  c=100u 
+ 
+ 
+ 
+ 
+ 
+ .model pmosTest pmos  vto=-0.5 kp=0.5m lambda=0
+ m_m1   7   3   6   6   pmosTest  w=15u    l=1u         
+ 
+ 
+ 
+ 
+ 
+ .control
+   destroy all
+   
+   
+   echo ######### Vaja 2 #########
+   
+   
+   
+   echo --------------------- OP1 -------------------------
+   
+   op
+   
+   
+    let idq=v(7,5)/12568
+    let vsdq=v(6,7)
+    let vsgq=v(6,3)
+    
+    print idq vsdq vsgq
+   
+    
+
+
+   echo --------------------- DC1 -------------------------
+   
+   tran 1u 3m
+   
+    let id=v(7,5)/12568
+    let vsd=v(6,7)
+    let vsg=v(6,3)
+    let vout=v(8)
+    let vin=v(1)
+    let vgg=v(3)
+    let vss=v(6)
+    let vdd=v(7)
+    fourier 5k vout
+    
+    plot vss vgg vdd xlabel 'cas' ylabel 'vs,vg,vd'
+    
+    
+    let vin_pp=max(vin)-min(vin)
+    let vout_pp=max(vout)-min(vout)
+    let av=vout_pp/vin_pp
+    
+    print av
+    
+    
+    
+    
+    
+    
+    
+    
+    
+   
+   
+   
+    
+ .endc
+ 
+ 
+ 
+ 
+ .end

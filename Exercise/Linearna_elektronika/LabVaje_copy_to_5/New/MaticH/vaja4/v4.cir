@@ -1,0 +1,40 @@
+Vaja 4
+
+    .include models.inc
+
+    r_rsrc  1   4   r=10k
+    r_re    3   7   r=10k
+    r_rl    0   8   r=2k
+    r_r1    5   2   r=242k
+    r_r2    5   3   r=395k
+    
+    c_c1    5   4  c=100u
+    c_c2    7   8  c=100u
+    
+    v_vsrc      1   0   dc=0    sin=(0,  0.15, 5k)
+    v_vplus     2   0   dc=5
+    v_vminus    3   0   dc=-5
+    
+    q1   2   5   7  BC238B
+    
+    .control
+    destroy all
+        echo ########## Vaja 4 ##########
+    
+        echo .......... OP1 ..........
+        
+        op
+           
+            let icq= -i(v_vplus) - v(5,2)/242000
+            let vceq=v(2,7)
+            let vbeq=v(5,7)
+            
+            print icq vceq vbeq
+            
+        
+        echo .......... TRAN1 ..........
+        
+        
+    .endc
+
+    .end

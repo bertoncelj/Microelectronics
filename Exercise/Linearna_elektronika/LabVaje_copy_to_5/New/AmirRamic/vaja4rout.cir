@@ -1,0 +1,35 @@
+*to je to 
+vp 1 0 dc=5
+vn 3 0 dc=-5
+vb 2 10 dc=0
+ve 11 4 dc=0
+vc 1 5 dc=0
+r1 1 2 r=244k
+r2 2 3 r=396.2k
+re 3 4 r=10k
+C1 2 7 c=100u
+C2 4 13 c=100u
+vx 13 0 dc=0 sin=(0,3.85,5k)
+rsrc 7 8 r=10k
+vin 8 0 dc=0 sin=(0,0,0)
+q1 5 10 11 bc238b
+.model bc238b NPN BF=150
+.control
+destroy all
+echo to je to 
+op
+let Uce=v(5)-v(11)
+let Ube=v(10)-v(11)
+let Ib=i(vb)
+let Ie=i(ve)
+let Ic=i(vc)
+print    Ib Ie Ic Uce Ube
+tran 1u 1m
+let voutPP = max(v(13))-min(v(13))
+		let ix= i(vx) 
+		let ioutPP =max(ix)-min(ix)
+   		let rout = voutPP/ioutPP
+    		print rout
+	
+.endc
+.end

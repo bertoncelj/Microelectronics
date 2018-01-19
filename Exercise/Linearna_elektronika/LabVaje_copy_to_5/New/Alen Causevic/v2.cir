@@ -1,0 +1,61 @@
+Vaja 2
+
+r_r1    1   2   r=37.4k
+r_r2    2   3   r=151.5k
+r_rs    1   4   r=5.4k
+r_rd    3   5   r=12.6k
+r_rsi   7   8   r=0.5k
+r_rl    6   0   r=10k
+
+
+v_vdd   3   0   dc=-9
+v_vss   1   0   dc=9
+v_vin   7   0   dc=0    sin=(0, 15m, 5k)
+
+c_c1    8   2   c=100u
+c_c2    5   6   c=100u
+*c_cs    4   0   c=100u
+
+
+.model pmosTest pmos level=1 vto=-0.5 kp=0.5m
+m_m1    5   2   4   4   pmosTest    w=15u   l=1u
+
+.control
+
+    destroy all
+    
+    echo #### Naloga 2 ####
+    echo ----  OP1  ----
+    
+    op
+    
+    print i(v_vdd)  i(v_vss) 
+    
+    let idq=  v(5,3)/@r_rd[r]
+    let vsdq= v(4,5)
+    let vsgq= v(4,2)
+    let vout= v(6)
+    print idq vsgq vsdq vout
+    
+    echo #### Tran 1 ####
+    
+    tran 1u 3m
+    
+    let vin=v(2)
+    let id=v(5,3)/@r_rd[r]
+    let vsd= v(4,5)
+    let vsg= v(4,2)
+    let vout= v(6)
+    
+    plot vin vout xlabel 'time' ylabel 'vin(t), vout(t)'
+    fourier 5k vout
+    
+    let vin_pp=max(vin)-min(vin)
+    let vout_pp=max(vout)-min(vout)
+    let av_abs=vout_pp/vin_pp
+    print av_abs
+
+    
+.endc
+
+.end

@@ -1,0 +1,91 @@
+ime_vezja
+
+
+
+*Opis vezja
+*elementi
+*   tip elementa: r, c, l, v, i, q ...
+*   ime elementa
+*   vozlisca
+*   parametri
+
+.model testmodel nmos vto=1.4 kp=0.25m lambda=0
+
+
+vdd     2 0     dc=5v
+rd      2 3     r=8k
+m1      3 1 4 4 testmodel w=2u l=1u
+vin     1 0     dc=0 acmag=1 sin=(0 1.4 1k)
+rs      4 5     r=4.371k
+vtest   5 6     dc=0
+vss     6 0     dc=-5
+
+*echo, op, setplot, destroy, display, print, plot, tran, fourier, min, max
+.control
+destroy all
+echo ##### START #####
+echo ------ OP1 ------
+
+*delovna tocka - operating point
+op
+
+*print -i(vdd) v(2,3)/@rd[r]
+let idq = -i(vdd)
+let vdsq = v(3,4)
+let vgsq = v(1,4)
+let vout = v(3)
+print idq vdsq vgsq vout
+
+
+*dc param start stop step
+echo ------ DC1 ------
+dc @rs[r] 1k 5k 1
+let idq = -i(vdd)
+let vdsq = v(3,4)
+let vgsq = v(1,4)
+let vout = v(3)
+*plot idq xlabel 'Rs [ohm]' ylabel 'Idq [A]'
+
+
+*load line
+echo ------ DC2 ------
+*dc @vin[dc] -10 10 .1
+dc vin -10 10 .1
+let id = -i(vdd)
+let vds = v(3,4)
+let vgs = v(1,4)
+let vout = v(3)
+
+*plot id vs vds xlabel 'vin [V]' ylabel 'id [A]'
+*plot vout xlabel 'vin [V]' ylabel 'vout [V]'
+
+*transient analysis
+echo ------ TRAN1 ------
+*tran dt tstop
+tran 1u 3m
+let id = -i(vdd)
+let vds = v(3,4)
+let vgs = v(1,4)
+let vout = v(3)
+
+plot v(1) vout
+
+*fourier analysis - distortion
+*fourier f0 signal
+fourier 1k vout
+let id = -i(vdd)
+let vds = v(3,4)
+let vgs = v(1,4)
+let vout = v(3)
+let vin = v(1)
+
+let vin_pp = max(vin) - min(vin)
+let vout_pp = max(vout) - min(vin)
+let av_abs = vout_pp/vin_pp
+print av_abs
+*ABSOLUTNA VREDNOST OJACANJA - FAZA JE OBRNJENA!!!
+
+
+
+.endc
+.end

@@ -1,0 +1,71 @@
+ Vaja 2 - Delovna tocka, nap ojacanje, popacenje
+ 
+ *upori
+ r_rL   8 0     r=10k
+ r_rd   6 9     r=12.568k
+ r_r1   4 3     r=37.5k
+ r_r2   3 7     r=150.6k 
+ r_rs   4 5     r=5.432k
+ r_rsi  1 2     r=500
+ 
+ *kond
+ c_c1   2 3     c=100u
+ c_c2   6 8     c=100u
+ c_cs   5 0     c=100u
+ 
+ *mosfet
+ m_1 6 3 5 5 fet1  w=15u l=1u
+ 
+ *model. .model ime_modela tip_el parametri
+.model fet1 pmos vto=-0.5 kp={0.5m*1.1} lambda=0
+ 
+ *viri
+ v_vin 1 0   dc=0    sin=(0, .010, 5k)
+ v_v1   4 0  dc=9
+ v_v2   7 0  dc=-9
+ v_v3   9 7  dc=0
+ 
+ 
+ 
+ .control
+    destroy all
+ 
+echo ------OP1---------
+    op
+    
+    let idq= i(v_v3)
+    let vsdq=v(5,6)
+    let vsgq=v(5,3)
+   * let vout=v(8,0) narobe nicle ne pisi
+   let vout=v(8)
+    
+    
+    print idq vsdq vsgq vout
+    
+    
+echo ----------Tran-----------
+
+
+tran 1u 1m 
+
+let idq= i(v_v3)
+    let v_s=v(5)
+    let vg=v(3)
+    let vd=v(6)
+   * let vout=v(8,0) narobe nicle ne pisi
+   *let vout=v(8)
+
+    plot v_s vg vd xlabel 'cas' ylabel 'r:vs, g:vd, b:vg'
+   
+   
+   
+   
+   
+   
+   
+   
+   
+    
+    .endc
+    
+    .end

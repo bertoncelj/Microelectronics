@@ -1,0 +1,92 @@
+asdf
+ 
+	.include models.inc
+	r1		3	4	r=242k
+	r2		3	5	r=395k
+	re		5	6	r=10k
+	rl		7	0	r=20k
+	rsrc	1	2	r=10k
+	
+	c1	2	3	c=100u
+	c2	6	7	c=100u
+ 
+	vsrc 		1	0 	dc=0 	sin=(0, 0.2010767, 5k)
+	vp 			4 	0 	dc=5
+	vn 			5 	0 	dc=-5
+    
+    q 4 3 6 BC238B
+	
+*q_q1 c b e model
+	
+.control																		
+    destroy all																	
+																				
+	echo ###########################START############################
+    
+	echo --------------------------__OP1__---------------------------
+    
+	op
+			
+			let B = 150
+			let icq = v(5,6)/@re[r] *(B-1)/B
+			let vceq = v(4,6)
+			let vbeq = v(3,6)
+			
+			print icq vceq vbeq
+	
+	echo --------------------------_TRAN1_---------------------------
+		
+		tran 1u 5m
+			
+			let icq = v(3,4)/@r1[r]
+			let vceq = v(4,5)
+			let vbeq = v(3,5)
+			
+			let vout=v(7)
+			let vsrc=v(1)
+			let vp=v(4)
+			let vn=v(8)
+			
+			fourier 5k vout
+			*plot vin vout xlabel 'cas' ylabel 'Vin[V] - red	  Vout[V] - green'
+			
+			let vsrc_pp=max(vsrc)-min(vsrc)
+			let vout_pp=max(vout)-min(vout)
+			let av=-vout_pp/vsrc_pp
+			
+			*print av
+			
+			let isrc_pp = max(i(vsrc))-min(i(vsrc))
+			let il_pp = max(v(7)/@rl[r])-min(v(7)/@rl[r])
+			let ai = il_pp/isrc_pp
+			print tran1.ai
+			
+			
+        
+        let @rl[r]=2k
+        tran 1u 5m
+        
+			
+			let icq = v(3,4)/@r1[r]
+			let vceq = v(4,5)
+			let vbeq = v(3,5)
+			
+			
+			let vout=v(7)
+			let vsrc=v(1)
+			
+			*fourier 5k vout
+			*plot vin vout xlabel 'cas' ylabel 'Vin[V] - red	  Vout[V] - green'
+			
+			let vsrc_pp=max(vsrc)-min(vsrc)
+			let vout_pp=max(vout)-min(vout)
+			let av=-vout_pp/vsrc_pp
+        
+			
+		print tran1.av tran2.av tran2.av/tran1.av	
+		
+		
+	.endc
+
+.end
+

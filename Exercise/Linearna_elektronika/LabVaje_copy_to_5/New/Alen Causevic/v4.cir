@@ -1,0 +1,77 @@
+Vaja 4
+
+.include models.inc
+
+r_r1    4   3   r=242k
+r_r2    3   5   r=395k
+r_re	5	6	r=10k
+r_rsrc  1   2   r=10k
+r_rl    0   7   r=2k
+
+c_c1    2   3   c=100u
+c_c2    6   7   c=100u
+
+
+v_vp   	4   0   dc=5
+v_vn   	5   0   dc=-5
+v_vin   1   0   dc=0    sin=(0, 100m, 5k)
+*v_vx    7   0   dc=0    sin=(0, 1, 5k)
+
+q_q1     4   3   6    BC238B 
+
+.control
+    
+    destroy all
+    
+    op
+    
+    let ieq=v(6,5)/@r_re[r]
+    let vceq=v(4,6)
+    let vbeq=v(3,6)
+    let icq=i(v_vp)-v(4,3)/@r_r1[r]
+    
+    print icq vceq vbeq ieq
+
+    echo ### tran1 ###    
+    tran 1u 2m
+    
+    *let vout=v(7)
+    *let voutpp=max(vout)-min(vout)
+    *let ioutpp=max(i(v_vx))-min(i(v_vx))
+    *let rout=voutpp/ioutpp
+    *print rout
+    
+    
+    
+    let vout=v(7)
+    let vin=v(3)
+    let voutpp=max(vout)-min(vout)
+    let vinpp=max(vin)-min(vin)
+    let av_absmin=voutpp/vinpp
+    print av_absmin
+
+    
+    echo ### tran2 ###
+    let @r_rl[r]=20k
+    tran 1u 2m
+    
+    let vout=v(7)
+    let vin=v(3)
+    let voutpp=max(vout)-min(vout)
+    let vinpp=max(vin)-min(vin)
+    let av_absmax=voutpp/vinpp
+    print av_absmax
+    
+    let avr=tran1.av_absmin/av_absmax
+    print avr
+    *fourier 5k vout
+    
+    let iout=v(7)/@r_rl[r]
+    let iin=i(v_vin)
+    let ioutpp=max(iout)-min(iout)
+    let iinpp=max(i(v_vin))-min(i(v_vin))
+    let ai=ioutpp/iinpp
+    print ai av_absmax
+.endc
+
+.end

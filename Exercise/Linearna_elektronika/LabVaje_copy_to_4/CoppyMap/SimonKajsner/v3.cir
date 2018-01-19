@@ -1,0 +1,89 @@
+ 3. Laboratorijska vaja (Komentar,naslov,....)
+
+ 
+    *Ukazi: echo, op(delona tocka), setplot, display, print, let, dc, destroy, plot, tran, fourier, max, min
+    *-------opis vezja------------------
+	
+	r_rs    7   8   r=5k
+    r_rd    4   5   r=5k
+	r_r1    4   3   r=40.484k
+	r_r2    3   2   r=31.628k
+	r_r3    2   8   r=54.4k
+	
+	r_in   1   0   r=1m
+
+	*v_vin   1   0   dc=0    sin=(0, 0.201, 5k)
+	v_vout 9   0   dc=0    sin=(0, 1, 5k)
+    v_vp   4   0   dc=5
+    v_vn   8   0   dc=-5
+	
+	
+
+	*m_imeTran d g s b imeModela parametri
+
+	.model nmosTest nmos level=1 vto=0.8 kp=0.5m
+    
+    m_m1    5   3   6   6   nmosTest    w=2u    l=1u
+	m_m2    6   2   7   7   nmosTest    w=2u    l=1u
+	
+	
+	C1	1	2	c=100u	
+	C2	3	0	c=100u	
+	Cs	7	0	c=100u	
+	Cout 5 9   c=100u
+	*cout moramo dodati da ne pokvarimo vezja (zabijemo kondenzatorje)
+	
+	*------------Simulacija-----------------
+    
+    .control
+        destroy all
+    
+        echo ######### Vaja 3 #########
+        
+        
+        echo --------- op1 ---------
+		
+		*delovna tocka
+		op
+		
+        let idq=v(4,5)/5000
+		let vdsq1=v(5,6)
+		let vdsq2=v(6,7)
+		let vgsq1=v(3,6)
+		let vgsq2=v(2,7)
+		let vg1=v(2)
+		
+		
+        print idq vdsq1 vdsq2 vgsq1 vgsq2 vg1
+        
+        echo --------- TRAN1 ---------
+        
+		* tran dt tstop --- casovna analiza (dt-CASOVNI korak, )
+		
+		tran 1u 5m
+		
+		
+		
+		*let vin=max(v(1))-min(v(1))
+		*let ivh=max(-i(v_vin))-min(-i(v_vin))
+		*let rin = vin/ivh
+		*print rin
+		
+		
+		let vout=max(v(9))-min(v(9))
+		let iiz=max(-i(v_vout))-min(-i(v_vout))
+		let riz=vout/iiz
+		print riz
+		
+		*fourier 5k vout
+		
+		
+        let vin_pp=max(v(1))-min(v(1))
+        let vout_pp=max(v(5))-min(v(5))
+        let av=vout_pp/vin_pp
+        
+        print av 
+    .endc
+
+    .end
+ 

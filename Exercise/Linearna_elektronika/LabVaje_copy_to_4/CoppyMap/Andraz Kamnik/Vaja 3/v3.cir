@@ -1,0 +1,63 @@
+Vaja linel 3 
+
+
+vp 4 0 dc = 5
+vn 8 0 dc = -5
+vin 1 0 dc = 0	sin=(0, 0.201, 5k)
+
+r1 3 4 r=40.484k
+r2 2 3 r=31.628k
+r3 8 2 r=54.4k
+rs 7 8 r=5k
+rd 4 5 r=5k
+
+c1 1 2 c=100u
+c2 3 0 c=100u
+c3 7 0 c=100u
+
+	*m_imeTran d g s b imeModela parametri
+	*.model imeModela tipEl parametri(kp, vto, ...)
+
+.model modeln nmos kp=0.5m vto=0.8 lambda=0.1m
+
+m1 6 2 7 7 modeln w=2u l=1u
+m2 5 3 6 6 modeln w=2u l=1u	
+	
+
+.control
+destroy all
+    echo #### Vaja 3 ####
+
+    
+    echo ------OP1-------
+	op
+	let idq = v(4,5)/5000
+	let vdsq1 = v(6,7)
+	let vdsq2 = v(5,6)
+	let vgsq1 = v(2,7)
+	let vgsq2 = v(3,6)
+	let vg1	  = v(2)
+	
+	print idq vdsq1 vdsq2 vgsq1 vgsq2 vg1 
+	
+	echo ------TRAN1------
+	
+        tran 1u 3m
+        fourier 5k v(5)
+        
+        plot v(1) v(5) v(7) xlabel 'cas' ylabel 'vg1, vd2, vs1' 
+        plot v(5) v(1) xlabel 'cas' ylabel 'vout[t], vin[t]'
+
+	
+        let vinPP = max(v(1))-min(v(1))
+        let voutPP = max(v(5))-min(v(5))
+        let av = voutPP/vinPP
+        print av
+        
+        
+        
+        
+
+.endc
+ 
+.end

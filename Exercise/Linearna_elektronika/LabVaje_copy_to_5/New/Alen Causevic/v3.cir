@@ -1,0 +1,68 @@
+Vaja 3
+
+r_r1    6   7   r=40.5k
+r_r2    6   2   r=31.6k
+r_r3	2	3	r=54.4k
+r_rs    3   4   r=5k
+r_rd    7   8   r=5k
+
+c_c1    0   2   c=100u
+c_c2    6   0   c=100u
+c_c3    4   0   c=100u
+c_c4    8   9   c=100u
+
+v_vp   	7   0   dc=5
+v_vn   	3   0   dc=-5
+*v_vin   1   0   dc=0    sin=(0, 0, 5k)
+v_vx    9   0   dc=0    sin=(0, 1, 5k)
+
+.model nmosTest nmos level=1 vto=0.8 kp=0.5m
+m_m1    5   2   4   4   nmosTest    w=2u   l=1u
+m_m2    8   6   5   5   nmosTest    w=2u   l=1u
+
+.control
+
+	destroy all
+	
+	echo ---OP analiza---
+	
+	op
+	
+	let idq=v(4,3)/@r_rd[r]
+	let vdsq1=v(5,4)
+	let vdsq2=v(8,5)
+	let vgsq1=v(2,4)
+	let vgsq2=v(6,5)
+	let vg1=v(2)
+	
+	print idq vdsq1 vdsq2 vgsq1 vgsq2 vg1
+
+	tran 1u 2m
+	
+	let vin=v(2)
+	let id=v(4,3)/@r_rd[r]
+	let vout=v(8)
+	
+    *plot vin vout xlabel 'time' ylabel 'vin(t), vout(t)'
+	fourier 5k vout
+	
+	tran 1u 2m
+	let vin=v(2)
+    let id=v(4,3)/@r_rd[r]
+	let vout=v(8)
+	let vin_pp=max(vin)-min(vin)
+	*let iin_pp=max(i(v_vin))-min(i(v_vin))
+    let vout_pp=max(vout)-min(vout)
+    let av_abs=vout_pp/vin_pp
+    *let rin=vin_pp/iin_pp
+    print av_abs 
+	
+	let voutpp=max(vout)-min(vout)
+    let ioutpp=max(i(v_vx))-min(i(v_vx))
+    let rout=voutpp/ioutpp
+    print rout
+    
+	
+.endc
+	
+.end

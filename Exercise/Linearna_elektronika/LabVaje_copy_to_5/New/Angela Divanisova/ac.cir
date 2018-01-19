@@ -1,0 +1,32 @@
+
+vin   1  0  dc=0   sin=(1, 1, 1k), acmag=1
+r1    1  2  r=1k
+c1    2  3  c=1u
+r2    3  0  r=2k
+c2    3  0  c=0.1n
+
+
+
+
+.control
+destroy all
+
+echo #################################
+
+    *malosignalna izmenicna analiza => potrebuje vsaj en acmag vir
+    *ac tip_skale st_tock fstart fstop
+    
+    ac dec 10 1 100meg
+    
+    
+    let av=v(3)/v(1)
+    let av_db=db(av)
+    let av_ph=ph(av)
+    
+    *Bodeyev diagram
+    plot av_db xlabel 'f' ylabel 'Av[dB]'
+    plot av_ph xlabel 'f' ylabel 'faza'
+
+
+.endc
+.end

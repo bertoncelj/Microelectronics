@@ -1,0 +1,12 @@
+ xx
+ 
+ vx 1 0 dc=0 sin(0,1,1k)
+ r1 1 2 r=1k
+ r2 2 0 r=2k
+
+ .controll
+ destroy all
+ *tf
+ 
+ .endc
+ .end

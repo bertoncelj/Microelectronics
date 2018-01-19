@@ -1,0 +1,105 @@
+Komentar, naslov, ... prvo vrstico spice ignorira
+    * Opis vezja
+    * 1.crka    : tip elementa (r, c ,l ,m -mosfet, q -bipolar, t, v, i,...)
+    * sledi     : ime elementa 
+    * sledi     : vozl. (masa je vedno vozlišče 0)
+    * sledi     : parametri
+    
+    * k-kilo, m-mili, meg-mega, u-mikro, ...
+    
+    r_rs    4   5   r=4.4k
+    r_rd    3   2   r=8k
+    
+    *v_imevira  n+  n-  dc=xx   acmag=xx    sin=(offset, ampl, freq)   
+    
+    v_vin   1   0   dc=0    sin=(0, 0.5, 1k)
+    v_vdd   2   0   dc=5
+    v_vss   5   0   dc=-5
+    
+    *m_imTran   d   g   s   b imeModela parametri
+    *.model: imeModela  tipEl   parametri(vto,lambda,kp,...)
+    
+    .model nmosTest nmos   level=1  vto=1.4 kp=0.5m
+    
+    
+    m_m1    3   1   4   4   nmosTest    w=1u    l=1u
+
+    *ukazi: echo, op, setplot(zbirka rezultatov), display, print, let, dc, destory, tran, plot, fourier, max, min, sqrt,...
+    
+    .control
+        destroy all
+        
+        echo ########## Vaja 1 ##########
+    
+        
+        echo .......... OP1 ..........
+         *Delovna tocka
+         op
+         
+        *print v(1), v(2), v_vin#branch i(v_vin)
+        * print all
+        
+        
+        * tok skozi tranzistor IDQ
+       *print  -i(v_vdd)    i(v_vss)    v(2,3)/@r_rd[r]
+         
+        * spremenljivke (vektorji)
+        let idq = -i(v_vdd)
+        let vdsq=v(3,4)
+        let vgsq=v(1,4)
+        let vout=v(3)
+        print idq   vdsq    vgsq    vout
+        
+    
+    
+    
+    
+    
+        echo .......... DC1 ..........
+        * enosmerna analiza
+        * dc    parameter   start   stop    korak
+        dc      @r_rs[r]    1k  10k  10
+        
+        *plot -i(v_vdd)  xlabel 'RS[ohm]' ylabel 'IDQ[A]'
+        
+        
+        
+        
+        
+        echo .......... DC2 ..........
+        dc v_vin -10 10 0.1
+        
+        let id = -i(v_vdd)
+        let vds=v(3,4)
+        let vgs=v(1,4)
+        let vout=v(3)
+        
+        *plot id vs vds xlabel 'vds[V]' ylabel 'id[A]'
+        *plot vout xlabel 'vin[V]' ylabel 'vout[V]'
+        
+        echo .......... TRAN1 ..........
+        * tran dt tstop (casovna analiza)
+        tran  10u  5m
+        
+        let id = -i(v_vdd)
+        let vds=v(3,4)
+        let vgs=v(1,4)
+        let vout=v(3)
+        
+        plot v(1) vout xlabel 'time' ylabel 'r:vin[t], g:vout[t]'
+        
+        
+        
+        * fourierova analiza za popačenje
+        * fourier f0 signal
+        fourier 1k vout
+        
+        let vin_pp=max(v(1)) - min(v(1))
+        let vout_pp=max(v(3)) - min(v(3))
+        let av=vout_pp/vin_pp
+        
+        print av
+        
+    .endc
+
+    .end

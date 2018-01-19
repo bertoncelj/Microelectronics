@@ -1,0 +1,40 @@
+Vaja 4 
+    *includamo tranzistor
+    .include models.inc
+    
+    *DC analiza
+    
+    *upornosti
+    r_r1    1   2   r=242k
+    r_r2    2   3   r=395k
+    
+    r_re    4   3   r=10k
+    r_rsrc  7   6   r=10k
+    
+    *minimalna izhodna upornost
+    r_rl    5   0   r=2k    
+    
+    *kapacitiovnosti
+    c_c1	6	2	c=100u
+    c_c2	4	5	c=100u
+    
+    *napajalniki
+    v_plus    1   0   dc=5     
+    v_minus   3   0   dc=-5
+    v_vsrc    7   0   dc=0 sin(0, 0, 5k)
+    
+    
+    * m_imeTran c b e  (, gate, source, base) imeModela parametri
+    * tukaj includamo model, ga ne setavimo, kot smo ga sestavili pri Vajah 1,2,3
+    q_q1    1   2   4   BC238B   
+    
+   
+  
+    .control
+    
+    
+    
+    .endc
+    
+    
+.end    

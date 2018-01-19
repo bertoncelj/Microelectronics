@@ -1,0 +1,71 @@
+    Komentar, naslov....(SPICE ignorira)
+    
+    *OPIS VEZJA
+    *prva črka tip rl. (r, c, l, m-mosfet, v, i ...)
+    *sledi ime elementa
+    *sledi vozlišča
+    *sledi parametri
+    
+    *masa je vedno vzlisce 0
+    *k-kilo, m-mili, meg-mega, u-mikro
+    r_rsi   1   2   r=500
+    r_r1    3   4   r=37.4k
+    r_r2    3   5   r=150.6k
+    r_rs    4   6   r=5.45k
+    r_rd    5   7   r=12.55k
+    r_rl    8   0   r=10k
+    
+    c_c1    2   3   c=100u
+    *c_cs    6   0   c=100u
+    c_c2    7   8   c=100u
+    
+    *v_imevira  n+   n- dc=xx   acmag=xx    sin=(off, amp, freq)
+    v_vin   1   0   dc=0    sin=(0, 0.01, 5k)   
+    v_vplus   4   0   dc=9
+    v_vminus   5   0   dc=-9
+    v_tok      6    9  dc=0
+    
+    *m_imeTranz d   g   s   b   incModela parametri
+    *. model imeModela tipEl parametri (kp, vto, lambda...)
+    .model  pmosTest    pmos    level=1    vto=-0.5  kp=0.5m
+
+    m_ml    7   3   9   9   pmosTest    w=15u    l=1u
+    
+    *komentar
+    *ukazi: echo, op, setplot(zbirka rezultatov), display, print, let,dc, destroy all, plot. tran, fourier, max, min, sqrt
+    
+    .control
+        destroy all
+        echo ######## Vaja1 ######
+        echo ---------OP1---------
+        *delovna tocka ukaz op
+        op
+        *spremenljivka (vektor)
+        let idq=i(v_tok)
+        let vdsq=v(9,7)
+        let vgsq=v(9,3)
+
+       print vdsq, vgsq, idq
+       echo -------TRAN1-------
+        tran 1u 5m
+        let v_s=v(9)
+        let vg=v(3)
+        let vd=v(6)
+        plot v(1) v_s xlabel 'time' ylabel 'vs'
+        plot v(1) vg xlabel 'time' ylabel 'vg'
+        plot v(1) vd xlabel 'time' ylabel 'vd'
+        fourier 5k v(8)
+        let vsrc_pp = max(v(6))-min(v(6))
+        let vg_pp = max(v(3))-min(v(3))
+        let vd_pp = max(v(7))-min(v(7))
+        print vd_pp, vsrc_pp, vg_pp
+         echo -------TRAN2-------
+          let vin_pp = max(v(1))-min(v(1))
+        let vout_pp = max(v(8))-min(v(8))
+        let Av=vout_pp/vin_pp
+        print Av
+         
+  
+    .endc
+    
+    .end

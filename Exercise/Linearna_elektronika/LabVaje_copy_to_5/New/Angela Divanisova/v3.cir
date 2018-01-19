@@ -1,0 +1,52 @@
+*Vaja 3 Linearna Elektronika
+
+vin 1 0 dc=0 sin=(0, 0.201, 5k)
+vp   5  0  dc=5
+vn   7  0  dc=-5
+
+r1   3  5  r=39.7k
+r2   1  3  r=28.4
+r3   7  1  r=67.8k
+rs   6  7  r=5k
+rd   5  4  r=5k
+
+c1   8  1  c=100u
+c2   3  0  c=100u
+c3   6  0  c=100u
+
+.model modeln nmos lambda=0.1m vto=0.8 kp=0.5m
+
+m1 2 1 6 6  modeln  w=2u l=1u
+m2 4 3 2 2  modeln  w=2u l=1u
+
+.controll
+destroy all
+
+    echo #############VAJA3###################
+    echo --------------op1--------------------
+		
+		op
+			let idq=v(5,4)/@rd[r]
+			let vdsq1=v(2,6)
+			let vdsq2=v(4,2)
+			let vgsq1=v(1,6)
+			let vgsq2=v(3,2)
+			let vg1 = v(8)
+			
+			print idq vdsq1 vdsq2 vgsq1 vgsq2 vg1
+			
+    echo --------------tran1------------------
+		    tran 1u 3m
+		    fourier 5k v(4)
+		    
+                plot v(8) v(4) v(6) xlabel 'time' ylabel 'vg1, vd2, vs1'
+                plot v(4) v(8) xlabel 'time' ylabel 'vout[t], vin[t]'
+                
+                let vinPP=max(v(8))-min(v(8))
+			    let voutpp=max(v(4))-min(v(4))
+			    let avABS=voutPP/vinPP
+			    print avABS
+			    
+.endc
+.end
+                

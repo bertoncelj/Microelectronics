@@ -1,0 +1,47 @@
+Vaja 2
+
+	*data
+	r_r1	1	2 	r=37.5k
+	r_r2	2	3	r=150.6k
+	
+	r_rs	1	4	r=5.432k
+	r_rd	5	3	r=12.5k
+	
+	r_rsi	6	7	r=500
+	r_rl	8	0 	r=10k
+	
+	c1		2	6	c=100u
+	c2		5	8	c=100u
+	cs		4	0	c=100u
+	
+	v_vplus		1	0	dc= 9
+	v_vminus	3	0	dc=-9
+	v_in		7	0	dc =0	sin = (0,	0.01,	5k)
+	
+	*trazistor
+	.model pmosTran	pmos	level=1	vto=-0.5	kp=0.5m
+	m_pms	5	2	4	4	pmosTran	w=15u	l=1u
+	
+
+
+	.control
+		destroy all
+		
+		op
+	
+		let idq = v(1,4)/@r_rs[r]
+		let vsgq = v(4,2)
+		let vsdq = v(4,5)
+	
+		print idq vsgq vsdq
+		
+		echo ____NALOGA_4_________-
+		
+		tran 1u 5m
+		let vout = v(8)
+		fourier 1k	vout
+		plot
+		
+	.endc
+
+.end

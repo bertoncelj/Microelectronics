@@ -1,0 +1,34 @@
+Vaja4
+
+.include ../include/models.inc
+
+vin	1 0	dc=0 sin=(0 0 5k)
+vp	4 0	dc=5
+vn	0 5	dc=5
+vx	7 0	dc=0 sin=(0 .1 5k)
+
+c1	2 3	c=100u
+c2	6 7	c=100u
+
+rs	1 2	r=10k
+r1	4 3	r=242.5k
+r2	3 5	r=401.6k
+re	6 5	r=10k
+
+q1	8 3 6	bc238b
+
+
+.control
+destroy all
+
+***************Rout***************
+echo ----Rout----
+tran 1u 400u
+let ixpp = max(i(vx))-min(i(vx))
+let rout = 2*@vx[sin][1] / ixpp
+print rout
+
+	
+.endc
+
+.end

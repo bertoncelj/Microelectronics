@@ -1,0 +1,45 @@
+Vaja linel 34
+
+.include models.inc
+
+
+vp 6 0 dc = 5
+vn 4 0 dc = -5
+vin 1 0 dc = 0	sin=(0, 1, 5k)
+
+r1 6 3 r=242k
+r2 3 4 r=395k
+re 4 5 r=10k
+rl 7 0 r=2k
+rsrc 1 2 r=10k
+
+c1 2 3 c=100u
+c2 5 7 c=100u
+
+q1 6 3 5 BC238B
+
+
+
+
+.control
+destroy all
+    echo #### Vaja 4 ####
+
+    
+    echo ------OP1-------
+	op
+	let icq = -i(vp)-v(6,3)/242k
+	let vceq = v(6,5)
+	let vbeq = v(3,5)
+	
+	print icq vceq vbeq 
+	
+	echo ------TRAN1------
+	
+        
+        
+        
+
+.endc
+ 
+.end

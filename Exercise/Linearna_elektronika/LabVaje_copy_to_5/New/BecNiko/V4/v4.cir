@@ -1,0 +1,58 @@
+Emitorski sledilnik
+.include models.inc
+
+vin 1 0 dc = 0 sin = (0 1 5k)
+vp 6 0 dc = 5
+vn = 4 0 dc = -5
+
+r1 6 3 r=242k
+r2 3 4 r=395k
+re 4 5 r=10k
+rl 7 0 r=2k
+rsrc 1 2 r=10k
+q1 6 3 5 BC238B
+
+c1 2 3 c=100u
+c2 5 7 c=100u
+
+.control
+destroy all
+echo ######2.naloga#####
+echo '-------------------op---------------'
+op
+let ic=-i(vp)-V(6,3)/@r1[r]
+let vceq = v(6,5)
+let vbeq = v(3,5)
+print ic vceq vbeq
+
+echo ###### 3. in 5. naloga#########
+echo '----------------tran1----------------'
+tran 1u 2m
+let vout = v(7)
+let vin = v(1)
+let dvout = max(v(7))-min(v(7))
+let dvin = max(v(1))-min(v(1))
+let avmin = dvout/dvin
+
+print avmin
+*plot vin vout xlabel 't/s' ylabel 'U/V'
+
+echo '------------------tran2---------------'
+let @rl[r]=20k
+tran 1u 2m
+let dvout = max(v(7))-min(v(7))
+let dvin = max(v(1))-min(v(1))
+let avmax = dvout/dvin
+let diin = max(i(vin))-min(i(vin))
+let diout = max(v(7)/@rl[r])-min(v(7)/@rl[r])
+let ai = diout/diin
+
+*plot v(1) vs v(7)
+
+print avmax ai
+
+let dav = tran1.avmin/tran2.avmax
+print dav
+
+.endc
+.end

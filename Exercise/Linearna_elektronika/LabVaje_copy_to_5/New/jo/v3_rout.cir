@@ -1,0 +1,53 @@
+ 
+ 
+ vin 1 0 dc=0 sin=(0,0, 5k) 
+ c1 1 2 c=100u
+ 
+ 
+ r1 3 4 r=40.5k
+ r2 2 3 r=31.6k
+ r3 2 8 r=54.4k
+ 
+ cg 3 0 c=100u
+ cs 7 0 c=100u
+ 
+ rd 4 5 r=5k
+ rs 7 8 r=5k
+ 
+ vp 4 0 dc=5
+ vn 8 0 dc=-5
+ 
+ .model modn nmos level=1 vto=0.8 kp=1m lambda=1e-4
+ m1 6 2 7 7 modn w=1u l=1u
+ m2 5 3 6 6 modn w=1u l=1u
+
+ 
+ cx 5 55 c=100u
+ vx 55 0 dc=0 sin=(0,1,5k)
+ 
+ .control
+ destroy all
+ delete all
+ 
+ echo #############################
+ echo ------------ OP1 ------------
+ op 
+ let idq=v(4,5)/@rd[r]
+ let vdsq1=v(6,7)
+ let vdsq2=v(5,6)
+ 
+ 
+ echo ------------ TRAN1 ------------
+ tran 1u 5m
+ plot v(1) v(5)
+ 
+
+
+ let vx_pp=max(v(5))-min(v(5))
+ let ix_pp=max(i(vx))-min(i(vx))
+ 
+ print vx_pp / ix_pp
+
+ 
+ .endc
+ .end

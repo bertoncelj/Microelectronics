@@ -1,0 +1,25 @@
+ Primer tf analize
+
+ 
+    *-------opis vezja------------------
+	
+	vin 1 0 dc=0 sin=(0,1,1k)
+	r1 1   2   r=1k
+	r2 2   0   r=2k
+	
+	
+
+	
+	*------------Simulacija-----------------
+    
+    .control
+        tran 1u 5m
+        plot v(1) v(2)
+		
+		echo ######## tf ##########
+		*tf out ime_vira
+		
+    .endc
+
+    .end
+ 

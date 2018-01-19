@@ -1,0 +1,58 @@
+ 4. Laboratorijska vaja (Komentar,naslov,....)
+
+    .include models.inc
+ 
+    *Ukazi: echo, op(delona tocka), setplot, display, print, let, dc, destroy, plot, tran, fourier, max, min
+    *-------opis vezja------------------
+	
+	r_rsrc    1   2   r=10k
+    r_re    5   6   r=10k
+	r_r1    4   3   r=242k
+	r_r2    3   6   r=395k
+	r_rl    7   0   r=2k
+
+
+	v_vin   1   0   dc=0    sin=(0, 0.20, 5k)
+    v_vp   4   0   dc=5
+    v_vn   6   0   dc=-5
+	
+	
+	
+	q_q1   4   3   5   BC238B
+	
+	
+	C1	2	3	c=100u	
+	C2	5	7	c=100u	
+	
+	
+	*------------Simulacija-----------------
+    
+    .control
+        destroy all
+    
+        echo ######### Vaja 4 #########
+        
+        
+        echo --------- op1 ---------
+		
+		*delovna tocka
+		op
+		
+        let ieq=v(5,6)/10000
+		let vceq=v(4,5)
+		let vbeq=v(3,5)
+		
+		
+		
+        print ieq vceq vbeq
+        
+        echo --------- TRAN1 ---------
+        
+		* tran dt tstop --- casovna analiza (dt-CASOVNI korak, )
+		
+
+        
+    .endc
+
+    .end
+ 

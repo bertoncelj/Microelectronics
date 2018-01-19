@@ -1,0 +1,44 @@
+*to je to 
+vp 1 0 dc=5
+vn 3 0 dc=-5
+r1 1 2 r=244k
+r2 2 3 r=396.2k
+re 3 4 r=10k
+C1 2 7 c=100u
+C2 4 6 c=100u
+r5 6 0 r=2k
+rsrc 7 8 r=10k
+vin 8 0 dc=0 sin=(0,0.85,5k)
+*pri r5=2k ampl=0.964
+q1 1 2 4 bc238b
+.MODEL BC238B NPN IS=1.8E-14 ISE=5.0E-14 NF=.9955 NE=1.46 BF=400 BR=35.5
++ IKF=.14 IKR=.03 ISC=1.72E-13 NC=1.27 NR=1.005 RB=.56 RE=.6 RC=.25 VAF=80
++ VAR=12.5 CJE=13E-12 TF=.64E-9 CJC=4E-12 TR=50.72E-9 VJC=.54 MJC=.33
+
+
+.control
+destroy all
+echo to je to 
+op
+let Uce=v(5)-v(11)
+let Ube=v(10)-v(11)
+let Ib=i(vb)
+let Ie=i(ve)
+let Ic=i(vc)
+print    Ib Ie Ic Uce Ube
+tran 1u 1m
+plot v(6) v(8)
+fourier 5k v(6)
+let i1=i(vi1)
+let i2=i(vi2)
+let i1pp=max(i1)-min(i1)
+let i2pp=max(i2)-min(i2)
+let Ai=i2pp/i1pp
+let vin=v(8)
+let vin_pp=max(v(8))-min(v(8))
+let vout_pp=max(v(6))-min(v(6))
+let av_abs=vout_pp/vin_pp
+print av_abs vout_pp/2  Ai 
+.endc
+.end
+

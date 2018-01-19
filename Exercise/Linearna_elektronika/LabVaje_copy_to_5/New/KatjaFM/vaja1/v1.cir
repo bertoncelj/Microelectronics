@@ -1,0 +1,120 @@
+ Komentar, naslov,... (prvo vrstico Spice ignorira) pika pove da je to ukaz
+ 
+ *komentar
+ *pazi da Spice ve v katerem direktoriju je
+ *shranjuj sproti!
+ *ukazi: echo, op, setplot(katere analize je naredu)
+ 
+ 
+.control
+    echo ##### Vaja 1 ##### 
+    echo --------OPI-----
+ *echo vpiše besedilo v simulator
+ 
+ .endc
+ 
+ *OPIS VEZJA
+ *1.crka je vedno tip elementa ki ga pišemo ; tipi elementov: (r, c, m -mosfet, q -bjt, v, i, ...)
+ *sledi: ime elementa
+ *sledi: vozlisca; vrstni red je zelo pomemben
+ *sledi: parametri 
+ 
+ *prva crka določa element, druga pa je ime, ime je lahko karkoli
+ 
+ *končnice za multiplikacijo: k-kilo, m-mili, meg-mega, u-mikro, n-nano, f-femto
+ 
+ *masa je vedno vozlisce 0, ostala vozlisca se lahko imenujejo poljubno
+ 
+ r_rs   4   5   r=5k
+ r_rd   2   3   r=8k
+ 
+ *pri virih je pomembno kako so obrnjena vozlišča
+ *v_imeVira n+ n- dc=xx acmag=xx <-(kazalci)   sin= (offset, amplituda, freq)
+ v_vin    1   0   dc=0      sin=(0, 1.3, 1k)
+ v_vdd    2   0   dc=5
+ v_vss    5   0   dc=-5
+ 
+ *m_imeTranzistorja d g s b imeModela parametri
+ *.model imeModela tipEl parametri (kp, vto, lambda,..)
+ 
+ .model nmosTest nmos level=1 vto=1.4 kp=0.5m
+ m1     3   1   4   4   nmosTest   w=1u    l=1u     
+ 
+ .control
+ 
+ destroy all
+ 
+ echo #### vaja 1 #####
+ *delovna tocka (op=odprte sponke, gleda samo dc vire)
+ op
+ *ukazi: echo, op, setplot(katere analize je naredu), display, print, let, dc, destroy all(podriše vse ukaze, vse spremenjivke), tran, fourier, max, min, sqrt, 
+ *print v(1) v(2) v_vin#branch i(v_vin)
+ 
+ *tok skozi tranzistor @kliče element, da se uporabi njegova vrednost
+ *print -i(v_vdd) i(v_vss) v(2,3)/@r_rd[r]
+ 
+ *spremenjivke(vektorji) imamo vektor a z vrednostjo 1 (so lakalne spremenjivke samo za to analizo)
+ 
+ let idq=-i(v_vdd)
+ let vdsq=v(3,4)
+ let vgsq=v(1,4)
+ print idq vdsq vgsq
+ 
+ 
+ echo -------DC1-------
+ *enosmerna analiza
+ *dc parameter start stop korak
+ 
+ dc @r_rs[r] 1k 10k 10
+ 
+ *plot -i(v_vdd) xlabel 'RS [ohm]' ylabel 'IDQ [A]'
+
+ 
+ echo -----DC2------
+
+ 
+ dc v_vin -10 10 0.1 
+ 
+ let id=-i(v_vdd)
+ let vds=v(3,4)
+ let vgs=v(1,4)
+ let vout=v(3)
+ 
+ 
+ *plot id vs vds xlabel 'vds [V]' ylabel 'id[A]'
+ *plot vout xlabel 'vin[V]' ylabel 'vout[V]'
+ 
+ 
+ echo -----TRAN1------
+ 
+ *tran dt tstop (najboolj osnovna verzija časovne analize)
+ 
+ tran 10u 5m
+ 
+ let id=-i(v_vdd)
+ let vds=v(3,4)
+ let vgs=v(1,4)
+ let vout=v(3)
+ 
+ plot v(1) vout xlabel 'time' ylabel 'r:vin(t), g:vout(t)'
+ 
+ *fourier analiza za popoačenje
+ *fourier f0 signal
+ 
+ fourier 1k vout
+ 
+ let vin_pp=max(v(1))-min(v(1))
+ let vout_pp=max(v(3))-min(v(3))
+ let av_abs=vout_pp-vin_pp
+ 
+ print av_abs
+ 
+ 
+ 
+ .endc
+ 
+ 
+ 
+ 
+ 
+.end 

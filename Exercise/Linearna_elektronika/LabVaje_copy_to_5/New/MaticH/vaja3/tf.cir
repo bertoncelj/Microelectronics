@@ -1,0 +1,18 @@
+
+
+
+vin  1   0   dc=0    sin=(0, 1, 1k)
+r1   1   2   r=1k    
+r2   2   0   r=2k   
+
+.control    
+        
+    tran    1u  5m
+    plot    v(1)  v(2)
+
+    echo ######### TF #########
+    *tf out ime_vira
+    
+.endc
+
+.end

@@ -1,0 +1,80 @@
+vaja 4
+
+vin 1 0 dc=0 sin(0,1,5k)
+vp  4 0 dc=5
+vn  5 0 dc=-5
+vtest 4 8 dc=0
+vtest1 2 9 dc=0
+
+r1  3 4 r=242k
+r2  3 5 r=395k
+rsrc 1 2 r=10k
+rl  7 0 r=2k
+re  6 5 r=10k
+
+c1  9 3 c=100u
+c2  6 7 c=100u
+
+*.include ../models.inc
+
+.MODEL BC238B NPN IS=1.8E-14 ISE=5.0E-14 NF=.9955 NE=1.46 BF=400 BR=35.5
++ IKF=.14 IKR=.03 ISC=1.72E-13 NC=1.27 NR=1.005 RB=.56 RE=.6 RC=.25 VAF=80
++ VAR=12.5 CJE=13E-12 TF=.64E-9 CJC=4E-12 TR=50.72E-9 VJC=.54 MJC=.33
+
+* q c b e model
+q1 8 3 6 BC238B
+
+.control
+
+    destroy all
+
+    echo '-----------------OP analiza---------------'
+    op
+
+	let icq=i(vtest)
+	let ibq=i(vtest1)
+	let vceq=v(8,6)
+	let vbeq= v(3,6)
+	
+	print icq vceq vbeq  
+
+    echo '-----------------tran1--------------------'
+    tran 1u 1m
+    fourier 5k v(7)
+    
+    let vout = v(7)
+    let vin = v(1)
+
+    let vout_pp = max(vout) - min(vout)
+    let vin_pp = max(vin) - min(vin)
+    let avmin = vout_pp/vin_pp
+    
+    print avmin
+    
+    echo '-----------------tran2--------------------'
+    let @rl[r] = 20k
+    tran 1u 1m
+    let vout = v(7)
+    let vin = v(1)
+
+    let i_in= i(vtest1)
+    let i_out= v(7)/@rl[r]
+
+    let iout_pp = max(i_out) - min(i_out)
+    let iin_pp = max(i_in) - min(i_in)
+    let ai= iout_pp/iin_pp
+    print iout_pp iin_pp ai
+
+    let vout_pp= max(vout) - min(vout)
+    let vin_pp = max(vin) - min(vin)
+    let avmax = vout_pp/vin_pp
+    print avmax
+
+    let avv= tran1.avmin/avmax
+    print avv
+
+    fourier 5k vout
+
+    
+.endc
+.end

@@ -1,0 +1,47 @@
+3.Lab Vaja: MOSFET  kaskodni ojačevalnik
+
+
+vp 1 0 dc = 5
+vn 5 0 dc = -5
+vout2 9 0 dc = 0 sin(0, 0.201, 5k) * ne 1 na prvi kr bi lahko kondenzator pol skuru
+
+
+
+
+r1 1 2 r=40.5k
+r2 2 3 r=31.6k
+r3 3 5 r=54.4k
+
+rs 1 8 r=5k
+rd 6 5 r=5k
+
+c1 3 0 c=100u
+c2 2 0 c=100u
+c3 6 0 c=100u
+c4 8 9 c=100u
+
+.model modeln nmos kp=0.5m vto=0.8 lambda=0.1m
+
+m1 8 2 7 7 modeln w=2u l=1u
+m2 7 3 6 6 modeln w=2u l=1u   
+   
+
+.control
+destroy all
+    echo #### nal 3####
+
+   
+    echo ------TRAN1------
+    
+    tran 1u 5m
+    
+    vout_pp = max(v(9))- min(v(9))
+    iout_pp = max(i(vout2))- min(i(vout2))
+    
+    let rout = vout_pp/iout_pp
+    
+    print rout
+    
+.endc
+ 
+.end

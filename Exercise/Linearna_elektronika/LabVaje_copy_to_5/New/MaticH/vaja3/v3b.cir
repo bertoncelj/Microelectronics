@@ -1,0 +1,43 @@
+Vaja 3
+    r_rs    3   8   r=5k
+    r_rd    2   6   r=5k
+    r_r1    5   2   r=40.484k
+    r_r2    5   4   r=31.628k
+    r_r3    4   3   r=54.400k
+    
+    c_c1    1   4   c=100u
+    c_c2    0   5   c=100u
+    c_c3    8   0   c=100u
+    c_cx    9   6   c=100u
+    
+    v_vin       1   0   dc=0    sin=(0,  0, 5k)
+    v_vplus     2   0   dc=5
+    v_vminus    3   0   dc=-5
+    v_vx        9   0   dc=0    sin=(0, 0.2, 5k)
+    
+    .model nmos1 nmos   level=1  vto=0.8 kp=1m lambda=0
+    
+    
+    m_m1    7   4   8   8   nmos1
+    m_m2    6   5   7   7   nmos1
+    
+    
+    
+    
+    .control
+        echo ########## Vaja 3 ##########
+    
+        echo .......... TRAN1 ..........
+        
+            tran  1u  5m
+
+            let vxPP = max(v(9)) - min(v(9))
+            let ixPP = max(i(v_vx)) - min(i(v_vx))
+            
+            let rout = vxPP / ixPP
+            
+            print rout
+            
+    .endc
+
+    .end

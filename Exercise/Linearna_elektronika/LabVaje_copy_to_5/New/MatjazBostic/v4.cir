@@ -1,0 +1,36 @@
+
+.include models.inc
+
+vp      4   0   dc=5
+vn      6   0   dc=-5
+*vsrc    1   0   dc=0 sin=(0, 2, 5k)   
+vsrc    1   0   dc=0
+
+re      5   6   r=10k
+rsrc    1   2   r=10k
+r1      3   4   r=242k
+r2      3   6   r=395k
+*rl      7   0   r=2k
+vr      7   0   dc=0    sin=(0, 2, 5k)
+
+c1      2   3   c=100u
+c2      5   7   c=100u
+
+q1 4    3   5   BC238B
+
+
+    .control
+    destroy all
+    echo --------------op--------------------
+    
+    op
+    let ic = -i(vp)-v(4,3)/@r1[r]
+    let vceq = v(4,5)
+    let vbeq = v(3,5)
+    print ic vceq vbeq
+    
+    vpp = max(v(7))-min(v(7))
+    ipp=max(i(vr))-min(i(vr))
+    
+    print max(v(7)) min(v(7)) vpp ipp vpp/ipp
+    

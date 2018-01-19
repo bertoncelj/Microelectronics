@@ -1,0 +1,40 @@
+Vaja linel 3 kaskodna vezava nMos
+
+
+vp 5 0 dc = 5
+vn 7 0 dc = -5
+vin 8 0 dc = 0	sin=(0, 0.0, 5k)
+vout 9 0        sin=(0, 0.2,   5k)
+
+r1 3 5 r=40.5k
+r2 1 3 r=31.6k
+r3 7 1 r=54.4k
+rs 6 7 r=5k
+rd 5 4 r=5k
+
+c1 8 1 c=100u
+c2 3 0 c=100u
+c3 6 0 c=100u
+c4 4 9 c=100u
+
+	*m_imeTran d g s b imeModela parametri
+	*.model imeModela tipEl parametri(kp, vto, ...)
+
+.model modeln nmos kp=0.5m vto=0.8 lambda=0.1m
+
+m1 2 1 6 6 modeln w=2u l=1u
+m2 4 3 2 2 modeln w=2u l=1u	
+
+.control
+destroy all
+
+tran 1u 5m
+
+let voutPP = max(v(9))-min(v(9))
+let ioutPP = max(i(vout))-min(i(vout))
+let rout = voutPP/ioutPP
+print voutPP ioutPP rout
+
+
+.endc
+.end

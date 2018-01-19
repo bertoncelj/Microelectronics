@@ -1,0 +1,33 @@
+Vaja 4
+
+.include models.inc
+
+r_r1    4   3   r=242k
+r_r2    3   5   r=395k
+r_re	5	6	r=10k
+r_rsrc  1   2   r=10k
+r_rl    0   7   r=2k
+
+c_c1    2   3   c=100u
+c_c2    6   7   c=100u
+
+
+v_vp   	4   0   dc=5
+v_vn   	5   0   dc=-5
+v_vin   1   0   dc=0    sin=(0, 0, 5k)
+ 
+q_q1     4   3   6    BC238B 
+
+.control
+    
+    
+    
+    let icq=v(6,5)/@r_re[r]
+    let vceq=v(4,6)
+    let vbeq=v(3,6)
+    
+    print icq vceq vbeq
+    
+.endc
+
+.end

@@ -1,0 +1,14 @@
+Komentar, naslov, ... prvo vrstico spice ignorira
+   
+    .control
+        echo ########## Vaja 1 ##########
+    
+        
+        echo .......... OP1 ..........
+        
+        echo .......... DC1 ..........
+        
+        
+    .endc
+
+    .end

@@ -1,0 +1,66 @@
+Vaja linel 34
+
+.include models.inc
+
+
+vp 6 0 dc = 5
+vn 4 0 dc = -5
+vin 1 0 dc = 0	sin=(0, 1, 5k)
+
+r1 6 3 r=242k
+r2 3 4 r=395k
+re 4 5 r=10k
+rl 7 0 r=2k
+rsrc 1 2 r=10k
+
+c1 2 3 c=100u
+c2 5 7 c=100u
+
+q1 6 3 5 BC238B
+
+*cbe ime modela
+
+
+.control
+destroy all
+    echo #### Vaja 4 ####
+
+    
+    echo ------OP1-------
+	op
+	let icq = -i(vp)-v(6,3)/242k
+	let vceq = v(6,5)
+	let vbeq = v(3,5)
+	
+	print icq vceq vbeq 
+	
+	
+	echo ------TRAN1------
+	
+    tran 1u 2m
+
+    let vout = v(7)
+    let vin = v(1)
+    let vout1 = max(v(7))-min(v(7))
+    let vin1 = max(v(1))-min(v(1))
+    let avmin = vout1/vin1
+
+
+    print avmin
+    plot vin vout xlabel 't[s]' ylabel 'U[V]'
+    
+    echo ------TRAN2------
+    
+    
+    let @rl[r]=20k
+    let vout = v(7)
+    let vin = v(1)
+    let vout2 = max(v(7))-min(v(7))
+    let vin2 = max(v(1))-min(v(1))
+    let avmax = vout2/vin2
+    
+    print avmax
+    plot vin vout xlabel 't[s]' ylabel 'U[V]'
+.endc
+ 
+.end

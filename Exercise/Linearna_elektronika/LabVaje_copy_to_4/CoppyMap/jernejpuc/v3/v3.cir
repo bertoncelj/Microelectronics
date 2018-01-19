@@ -1,0 +1,61 @@
+﻿Vaja 3
+
+vp 8 0 dc = 5
+vn 4 0 dc = -5
+vin 1 0 dc = 0	sin=(0, 0.201, 5k)
+
+r1 2 8 r=40.48k
+r2 2 3 r=31.62k
+r3 3 4 r=54.4k
+rs 4 5 r=5k
+rd 7 8 r=5k
+
+c1 1 3 c=100u
+c2 2 0 c=100u
+c3 5 0 c=100u
+
+m1 6 3 5 5 testmodel w=2u l=1u
+m2 7 2 6 6 testmodel w=2u l=1u	
+.model testmodel nmos kp=0.5m vto=0.8 lambda=0.1m	
+
+.control
+	destroy all
+
+	echo ------OP1-------
+	op
+	let idq = v(8,7)/@rd[r]
+	let vdsq1 = v(6,5)
+	let vdsq2 = v(7,6)
+	let vgsq1 = v(3,5)
+	let vgsq2 = v(2,6)
+	let vg1	  = v(1)
+	let vout = v(4)
+	
+	print idq vdsq1 vdsq2 vgsq1 vgsq2 vg1 
+	
+
+	echo ------TRAN1------
+    tran 1u 5m
+    	
+    let idq = v(8,7)/@rd[r]
+	let vdsq1 = v(6,5)
+	let vdsq2 = v(7,6)
+	let vgsq1 = v(3,5)
+	let vgsq2 = v(2,6)
+	let vout = v(7)
+	let vin = v(1)
+	
+   	fourier 5k vout
+
+	let vinpp = max(vin)-min(vin)
+    let voutpp = max(vout)-min(vout)
+    let av = voutpp/vinpp
+    print av
+
+	*izhodna upornost?
+	
+	plot vin vout xlabel 'time' ylabel 'vin, vout'
+	
+.endc
+ 
+.end

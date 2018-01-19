@@ -1,0 +1,65 @@
+* Komentar, naslov, opis,....
+ 
+
+* komentar se začne z zvezdico
+* v spice določimo direkt. ->cd /mnt/lisa/linel/LovroPerko/vaja1/   nato dat-> v1.cir
+
+
+* kontrol blok - ukazi
+* ukaz: echo, op->delovna tocka, steplot, destroy all, display, print,let, dc, plot
+
+* Opis vezja
+* elementi:
+*   1.crka:tip el. (r, c, l, q, m, d, v, i, ....)
+* sledi: ime el.
+* sledi vozlišča
+* sledi: parametri
+
+* koncnice potenc:k-kilo, m-mili, meg-mega, u-mikro, g, t, n, p, f, 
+* brez enot
+
+r_rd        2   3   r=8k
+r_rs        4   5   r=4.37k
+
+
+*v_ime      n+  n-  dc=xxx  sin(offset, ampl, frekv) acmag=xxx
+v_vin       1   0   dc=0
+v_vdd       2   0   dc=5
+v_vss       5   0   dc=-5
+
+
+* mosfet
+* m_ime  drain gate source bulk ime_modela parametri
+m_m1        3   1   4   4   testmodel w=2u l=1u
+* model: .model ime_modela tip_el parametri
+.model testmodel nmos vto=1.4 kp=0.25m lambda=0
+
+.control
+    echo ########## start########
+    
+    echo ----------------------------OP1------------------------------
+    op 
+
+    *IDQ: vRD/RD = v(2,3)/rd
+    *print -i(v_vdd) v(2,3)/@r_rd[r]  v_vss#branch
+    
+    let idq=-i(v_vdd)
+    let vdsq=v(3,4)
+    let vgsq=v(1,4)
+    let vout=v(3)
+    print idq vdsq vgsq vout
+    
+    *enosmerna analiza
+    echo-----------------------------DC1------------------------------
+    *dc parameter start stop korak
+    dc @r_rs[r] 1k 10k 10
+   
+    let idq=-i(v_vdd)
+    let vdsq=v(3,4)
+    let vgsq=v(1,4)
+    let vout=v(3)
+    
+    plot idq xlabel "RS [ohm]" ylabel "IDQ [A]"
+.endc
+
+.end

@@ -1,0 +1,45 @@
+    Komentar, naslov,..  
+
+
+    * Opis vezja
+    * 1. crka   : tip elementa (v pdf...r, c, t, m - mosfet,q- bjt, v, i,...=
+    * sledi     : ime el.
+    * sledi     : vozlisca
+    * sledi     : parametri 
+    
+    
+    
+    *masa: je vedno vozlisce 0 
+    * k-kilo, m-mili, meg-mega, u-mikro, n-nano, f-femto,...
+    r_rs    4   5   r=5k
+    rd      2   3   r=5k
+    
+    
+    * v_imeVira n+ n- dc=xx acmag=xx sin=(...)
+    v_vin   1   0   dc=0
+    v_vdd   2   0   dc=5
+    v_vss   5   0   dc=-5
+    
+    *m_imeTransistorja d g s b imeModela pamatri
+    * .model imeModela tipElementa parametri (kp, vto, lambda,...)
+    
+    .model nmosTest nmos level=1 vto=1.4 kp=0.5m
+    m_m1    3   1   4   4   nmosTest    w=1u    l=1u
+    
+
+    * komentar
+
+    * ukazi: echo, 
+
+
+    .control
+        echo ######## Vaja 1 #########
+    
+    
+        echo --------  OP1 ------------
+        
+        echo --------  DC1 ------------
+        
+    .endc
+
+    .end

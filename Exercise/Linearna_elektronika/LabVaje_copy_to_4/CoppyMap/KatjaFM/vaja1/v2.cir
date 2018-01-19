@@ -1,0 +1,19 @@
+ Komentar, naslov,... (prvo vrstico Spice ignorira) pika pove da je to ukaz
+ 
+ *komentar
+ *pazi da Spice ve v katerem direktoriju je
+ *shranjuj sproti!
+ *ukazi: echo, 
+ 
+ 
+.control
+    echo ##### Vaja 1 ##### 
+    echo --------OPI-----
+ *echo vpiše besedilo v simulator
+ 
+ .endc
+ 
+ 
+ 
+ 
+.end 

@@ -1,0 +1,65 @@
+Komentar, naslov,.....
+
+.include models.inc
+
+vp 5 0 dc = 10
+vin 1 0 dc = 0 sin=(0 0.01 5k) acmag=1
+vq1 4 8 dc = 0
+vq2 4 9 dc = 0
+
+r1 5 2      r=190k
+r2 2 0      r=95k
+rc 5 4      r=1450
+re 6 0      r=1000
+rl 7 0      r=10k
+
+c1 1 2 c=100u
+c2 4 7 c=100u
+ce 6 0 c=100u
+
+*  c b e
+q1 8 2 3 T2n2222
+q2 9 3 6 T2n2222  	
+
+.control
+destroy all
+    echo ############## OP ##############
+    
+    op
+    let irc   = v(5,4)/@rc[r]
+    let vceq1 = v(8,3)
+    let vceq2 = v(9,6)
+    let icq1  = i(vq1)
+    let icq2  = i(vq2)
+    
+    print irc vceq1 vceq2 icq1 icq2
+ 
+    echo ############## tran1 ############### 
+
+    tran 1u 5m
+     
+    let vinPP = max(v(1))-min(v(1))
+    let voutPP = max(v(7))-min(v(7))
+    let avmin = voutPP/vinPP
+    
+    let iout = v(7)/@rl[r]
+    let iinPP = max(i(vin))-min(i(vin))
+    let ioutPP = max(iout)-min(iout)
+    let ai1 = ioutPP/iinPP
+    
+    print avmin ai1
+    
+    echo ############## ac1 ###############
+    
+        ac dec 100 1 100meg
+    let av      = v(7)/v(1)
+    let av_db   = db(av)
+    let av_ph   = ph(av)
+    
+    let zin     = v(1)/-i(vin)
+    plot av_db xlabel 'f' ylabel 'Av[dB]'
+    plot av_ph xlabel 'f' ylabel 'fi[°]'
+    plot abs(zin)
+            
+.endc
+.end

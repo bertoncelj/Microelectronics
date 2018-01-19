@@ -1,0 +1,69 @@
+    Komentar, naslov....(SPICE ignorira)
+    
+    *OPIS VEZJA
+    *prva črka tip rl. (r, c, l, m-mosfet, v, i ...)
+    *sledi ime elementa
+    *sledi vozlišča
+    *sledi parametri
+    
+    *masa je vedno vzlisce 0
+    *k-kilo, m-mili, meg-mega, u-mikro
+    r_rsrc  1   2   r=10k
+    r_r1    3   4   r=242k
+    r_r2    3   5   r=395k
+    r_re    5   6   r=10k
+    r_rl    7   9   r=20k
+    
+    c_c1    2   3   c=100u
+    c_c2    6   7   c=100u
+    *c_c3    7   10   c=100u
+    
+    *v_imevira  n+   n- dc=xx   acmag=xx    sin=(off, amp, freq)
+    v_vin    1   0   dc=0    sin=(0, 0.1, 5k)   
+    v_vplus  4   0   dc=5
+    v_vminus 5   0   dc=-5
+    v_tok    4   8  dc=0
+    v_out    9   0   dc=0    sin(0,0,5k)
+    
+    .include models.inc
+    *m_imeTranz d   g   s   b   incModela parametri
+    *. model imeModela tipEl parametri (kp, vto, lambda...)
+    
+
+    q_q1   8   3   6   BC238B 
+    
+    *komentar
+    *ukazi: echo, op, setplot(zbirka rezultatov), display, print, let,dc, destroy all, plot. tran, fourier, max, min, sqrt
+    
+    .control
+        destroy all
+        echo ######## Vaja4 ######
+        echo ---------OP1---------
+        *delovna tocka ukaz op
+        op
+        *spremenljivka (vektor)
+        let icq=i(v_tok)
+        let vceq=v(8,6)
+        let vbeq=v(3,6)
+        print icq, vceq, vbeq
+        
+        echo -------TRAN1-------
+        tran 0.05u 5m
+        *let vtest_pp = max(v(6))-min(v(6))
+        *let itest_pp=max(i(v_out))-min(i(v_out))
+        *let rout=vtest_pp/itest_pp
+        *print rout
+        echo -------TRAN2-------
+        fourier 5k v(7)
+        echo -------TRAN3-------
+        let vout_pp = max(v(7))-min(v(7))
+        let vin_pp = max(v(1))-min(v(1))
+        let Av=vout_pp/vin_pp
+        print Av
+        let iout_pp=max(i(v_out))-min(i(v_out))
+        let iin_pp=max(i(v_vin))-min(i(v_vin))
+        let Ai= iout_pp/iin_pp
+        print Ai
+    .endc
+    
+    .end

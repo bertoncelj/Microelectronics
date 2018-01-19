@@ -1,0 +1,115 @@
+ 1. Laboratorijska vaja (Komentar,naslov,....)
+
+    *rs je enako kot r_rs
+    *Opis vezja
+    *1.crka :tip elementa (r,c,l,m -- mosfet, q- bipolarni tranzistor bjt, v, i,...)
+    * sledi :ime elementa
+    * sledi :vozlisce
+    *sledi  :parametri
+    
+    * masa je vedno vozlisce 0
+    
+    *k-kilo, m-mili, M->m, meg-mega, u-mikro, n-nano, f-femto...
+    
+    r_rs    4   5   r=4.4k
+    r_rd    2   3   r=8k
+    
+    *v_imeVira n+ n- dc=xx acmag=xx sin=(offset amplituda frekvenca)- sinusni vir deluje le v casovni ANALIZI
+    
+    v_vin   1   0   dc=0    sin=(0, 1.3, 1k)
+    v_vdd   2   0   dc=5
+    v_vss   5   0   dc=-5
+    
+    
+    *m_imeTran d g s b imeModela parametri
+    * .model imeModela tipElementa parametri (kp, vto, lambda,...)
+    
+    .model nmosTest nmos level=1 vto=1.4 kp=0.25m
+    
+    m_m1    3   1   4   4   nmosTest    w=2u    l=1u
+    
+ 
+    *komentar
+    *Ukazi: echo, op(delona tocka), setplot, display, print, let, dc, destroy, plot, tran, fourier, max, min
+    
+    *print v(1), print all, print i(v_vdd), print v_vdd#branch...
+    
+    
+    *zgoraj opis vezja, analiza gre v control
+    
+    .control
+        destroy all
+    
+        echo ######### Vaja 1 #########
+        
+        
+        echo --------- op1 ---------
+        *delovna tocka
+        op
+        
+        *tok skozi tranzistor Idq
+        *print -i(v_vdd) i(v_vss) v(2,3)/@r_rd[r]
+        
+        * spremenljivke (vektorji)
+        let idq=-i(v_vdd)
+        let vdsq=v(3,4)
+        let vgsq=v(1,4)
+        let vout=v(3)
+        
+        print idq vdsq vgsq vout
+        
+        *let so lokalne spremenljivke
+        
+        echo --------- DC1 ---------
+        
+        *enosmerna analiza
+        *spreminjamo 1 element in gledamo kaj se dogaja
+        *dc parameter start stop korak
+        * sweep vektor je tisto kar se je spreminjalo
+        
+        
+        dc @r_rs[r] 1k 10k 10
+        
+        plot -i(v_vdd) xlabel 'RS[ohm]' ylabel 'IDQ [A]'
+        
+        echo --------- DC2 ---------
+        
+        * vsaka analiza ma svoje lokalne spremenljivke
+        
+        dc v_vin -10 10 0.1
+        
+        let id=-i(v_vdd)
+        let vds=v(3,4)
+        let vgsq=v(1,4)
+        let vout=v(3)
+        
+        plot id vs  vds xlabel 'vin[V]' ylabel 'id[A]'
+        plot vout xlabel 'vin[V]' ylabel 'vout[V]'
+        
+        echo --------- TRAN1 ---------
+        
+        * tran dt tstop --- casovna analiza (dt-CASOVNI korak, )
+        
+        tran 10u 5m
+        
+        let id=-i(v_vdd)
+        let vds=v(3,4)
+        let vgsq=v(1,4)
+        let vout=v(3)
+        
+        plot v(1) vout xlabel 'time' ylabel 'r:vin(t), g:vout(t)'
+        
+        *fourier - popačenje (obstojeci casovni signal bo razbil na komponente)
+        *rabimo vsaj 1 periodo signala
+        * fourier f0 signal
+        fourier 1k vout
+        
+        let vin_pp=max(v(1))-min(v(1))
+        let vout_pp=max(v(3))-min(v(3))
+        let av=vout_pp/vin_pp
+        print av
+        
+        
+    .endc
+
+    .end

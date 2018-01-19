@@ -1,0 +1,51 @@
+Vaja 5
+
+.include models.inc
+
+r_r1    2   3   r=146.6k
+r_r2    2   0   r=75.9k
+r_re	8	0	r=1k
+r_rc    3   4   r=1.4k
+r_rl    0   9   r=10k
+
+c_c1    1   2   c=100u
+c_c2    4   7   c=100u
+c_ce    8   0   c=100u
+
+v_vp   	3   0   dc=10
+v_vin   1   0   dc=0    sin=(0, 10m, 5k)
+v_ic1   4   5   dc=0
+v_ic2   4   6   dc=0
+*v_vx    9   0   dc=0    sin=(0, 1, 5k)
+
+q_q1    5   2   7   T2n2222 
+q_q2    6   7   8   T2n2222 
+
+.control
+
+    destroy all
+    
+    op
+    
+    let vceq1=v(5,7)
+    let vceq2=v(6,8)
+    let icq1=i(v_ic1)
+    let icq2=i(v_ic2)
+    
+    print vceq1 vceq2 icq1 icq2
+    
+    echo ####tran1####
+    tran 1u 2m
+    
+    fourier 5k v(9)
+    
+    let vout=v(9)
+    let vin=v(2)
+    let voutpp=max(vout)-min(vout)
+    let vinpp=max(vin)-min(vin)
+    let av=voutpp/vinpp
+    
+    print av
+.endc
+
+.end

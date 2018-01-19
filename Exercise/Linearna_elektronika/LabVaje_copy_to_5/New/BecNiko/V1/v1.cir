@@ -1,0 +1,102 @@
+Komentar, naslov,..... kar napišeš v prvi vrstici spice ignorira
+
+
+*OpisVezja:
+*1.crka: tip elementa (r, c, l, m - mos tranzistor, q- bipolarc, v - napet vir, i tok vir,....)
+*      : ime elementa
+*      : vozlisca
+*      : parametri
+
+* k- kilo, m - mili, meg - mega, u- mikro.....
+
+rs  4   5   r=4.4k
+rd  2   3   r=8k
+
+
+*v_imeVira n+ n- parametri: dc= neki, acmag= neki sin=(offset, ampl, freq) vedno najprej pozitivno
+
+vin 1   0   dc=0    sin=(0, 1.3, 1k)
+vdd 2   0   dc=5
+vss 5   0   dc=-5
+
+*m_imeTran d g s b (vrstni red je pomemben) ime modela parametri
+*.model imeModela tipElementa parametri (kp, vto, lambda,....)
+
+.model nmosTest nmos level=1 vto=1.4 kp=0.25m
+m1  3   1   4   4   nmosTest    w=2u    l=1u
+
+
+*komentar 
+*ukaz: echo, op, setplot (zbirka rezultatov), display, let, print, dc, destroy, plot, vs , tran, fourier, max, min, sqrt....
+
+.control
+
+    destroy all
+
+    echo ##################### VAJA ######## 
+    
+    
+    
+    echo ------------ OP1 -----------
+    *Delovna tocka
+    op
+    
+    *print v(1), v(2), all......
+    *tok skozi tranzistor IDQ
+    
+    *print -i(vdd) i(vss) v(2,3)/@rd[r]
+    
+    *spremenljivke (vektorji)
+    let idq=-i(vdd)
+    let vdsq=v(3,4)
+    let vgsq=v(1,4)
+    let vout=v(3)
+    print idq vdsq vgsq vout
+    
+
+    echo ------------ DC1 -----------
+    *enosmerna analiza
+    *dc parameter start stop korak
+    dc @rs[r] 1k 10k 10
+    
+    *plot -i(vdd) xlabel 'RS[ohm]' ylabel 'IDQ[A]'
+    
+    echo ------------ DC2 -----------
+    dc vin -10 10 0.1
+    
+    let id=-i(vdd)
+    let vds=v(3,4)
+    let vgs=v(1,4)
+    let vout=v(3)
+    
+    *plot id vs vds xlabel 'vds[V]' ylabel 'id[A]'
+    *plot vout xlabel 'vin[V]' ylabel 'vout[V]'
+    
+    echo ------------ TRAN1 -----------
+    *tran dt tstop 
+    tran 10u 5m
+    
+    let id=-i(vdd)
+    let vds=v(3,4)
+    let vgs=v(1,4)
+    let vout=v(3)
+    
+    plot v(1) vout xlabel 'time' ylabel 'vin(t), vout(t)'
+
+    *fourier - popačenje 
+    *fourer f0 signal 
+    
+    fourier 1k vout 
+    
+    let vin_pp=max(v(1)) - min(v(1))
+    let vout_pp=max(v(3)) - min(v(3))
+    let av=vout_pp/vin_pp
+    
+    print av
+
+    
+    
+.endc
+
+
+.end

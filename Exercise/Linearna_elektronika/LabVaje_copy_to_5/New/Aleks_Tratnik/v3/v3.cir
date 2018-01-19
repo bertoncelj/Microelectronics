@@ -1,0 +1,63 @@
+kaskoda
+
+
+.model testmodel nmos vto=0.8 kp=1m lambda=0
+
+r1  1 2 r=40.484k
+r2  2 3 r=31.628k
+r3  3 11 r=54.4k
+rs  6 11 r=5k
+rd  1 4 r=5k
+
+c1  7 3 c=100u
+c2  2 0 c=100u
+c3  6 0 c=100u
+c4  8 4 c=100u
+
+m1  4 2 5 5 testmodel
+m2  5 3 6 6 testmodel
+
+v1  1 0     dc=5
+v2  11 0    dc=-5
+vin 7 0     dc=0 sin=(0 0.11 5k)
+vtest 8 0   dc=0 sin=(0 0 5k)
+
+
+.control
+op
+let idq=v(1,4)/5k
+let vdsq1=v(4,5)
+let vdsq2=v(5,6)
+let vgsq1=v(2,5)
+let vgsq2=v(3,6)
+let vg1=v(2)
+print idq
+print vdsq1
+print vdsq2
+print vgsq1
+print vgsq2
+print vg1
+
+
+tran .1u 400u
+
+let vout=v(4)
+let vin=v(7)
+let out_pp=max(vout)-min(vout)
+let in_pp=max(vin)-min(vin)
+let av=out_pp/in_pp
+
+fourier 5k v(4)
+print av
+
+let @vin[sin][1]=0
+let @vtest[sin][1]=.5
+
+tran .1u 400u
+let ipp=max(i(vtest))-min(i(vtest))
+print 1/ipp
+
+
+.endc
+
+.end

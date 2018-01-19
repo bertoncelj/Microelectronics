@@ -1,0 +1,129 @@
+    Naslov, opis, komentar... prvo vrstico SPICE vedno ignorira
+    
+    * to je komentar
+    * komentar je lahko samo celovrstičen
+    
+    
+    * kontrol blok - ukazi
+    *ukazi:     echo        ~izpise tekst, ki sledi ukazu
+    *           op          ~analiza delovne točke
+    *           setplot     ~pokaze vse razpolozljive analize
+    *           destroy     ~unici analizo (destroy all)
+    *           display     ~pokaze, kaj je SPICE izracunal v zadnji analizi
+    *           print       ~izpise stevilske vrednosti spremenljivk (print all)
+    *           let         ~to je za delat s spremenljivkami
+    *           dc          ~dc analitza
+    *           plot        ~za izris po dc analizi
+    *           tran        ~tranzientna (casovna) analiza
+    *           fourier     ~foureirova analiza
+    *           max         ~maksimalna vrednost signala
+    *           min         ~minimalna vrednost signala
+    
+    
+    
+    
+    
+    
+    
+    
+    *opis vezja
+    *elementi:
+    *   1. crka: tip elementa (r,c,l,q,m(tranzistor mos fet),d,v,i,...)
+    *   sledi: ime elementa
+    *   sledi: vozlisca
+    *   sledi: parametri brez enot
+    
+    *smemo uporabljat crke (10 000 = 10k)
+    *pazi, ker SPICE ignorira velike/male crke - m=M (mega/mili)
+    *m---mili; meg---mega
+    
+    
+    
+    r_rd    2   3   r=8k
+    r_rs    4   5   r=4.37158k
+    
+    *v_ime n+ n- dc=xxx sin=(offset, ampl, frequ) acmag=xxx
+    v_vin   1   0   dc=0    sin=(0, 1.31, 1k)
+    v_vdd   2   0   dc=5
+    v_vss   5   0   dc=-5
+    
+    *mosfet
+    *m_ime  d   g   s   b   ime_modela parametri
+    m_m1    3   1   4   4   testmodel   w=2u    l=1u
+    
+    
+    *model: .model ime_modela tip_elementa parametri
+    .model testmodel nmos vto=1.4 kp=0.25m lambda=0
+    
+    
+    *kp parameter je tisto, kar mamo mi vu ucbeniku kot kp'
+    
+    
+    
+    .control
+    destroy all
+        echo ################## start ##################
+        
+        echo ------------------  op1 -------------------
+        op
+        
+        *IDQ vRD/RD = v(2,3)/rd
+        *print -i(v_vdd) v(2,3)/@r_rd[r] v_vss#branch
+        
+        let idq=-i(v_vdd)
+        let vdsq=v(3,4)
+        let vgsq=v(1,4)
+        let vout=v(3)
+        
+        print id vdsq vgs vout
+        
+        echo ------------------  dc1 -------------------
+        * dc parameter start stop step
+        dc @r_rs[r] 1k 10k 10
+        
+        let idq=-i(v_vdd)
+        let vdsq=v(3,4)
+        let vgsq=v(1,4)
+        let vout=v(3)
+        
+        *plot idq xlabel 'RS[ohm]' ylabel 'IDQ [A]'
+    
+        echo ------------------  dc2 -------------------
+        *dc @v_vin[dc] -10 10 1 #to ni treba tko, ker napetostni vir že ima DC parameter
+        dc v_vin -10 10 0.1
+        
+        let id=-i(v_vdd)
+        let vds=v(3,4)
+        let vgs=v(1,4)
+        let vout=v(3)
+        
+        *plot id vs vds xlabel 'vds[V]' ylabel 'id[A]'
+        *plot vout vs sweep xlabel 'vin[V]' ylabel 'vout[V]'
+        
+        echo ----------------- tran1 -------------------
+        *casovna analiza
+        *tran dt tstop
+        tran 10u 5m
+        
+        let id=-i(v_vdd)
+        let vds=v(3,4)
+        let vgs=v(1,4)
+        let vout=v(3)
+        let vin=v(1)
+        
+        plot vin vout xlabel 'time' ylabel'vin, vout' r:vin g:vout
+        
+        *fourier - analiza popacenja
+        *fourier f0 signal
+        fourier 1k vout
+        
+        let vin_pp=max(vin)-min(vin)
+        let vout_pp=max(vout)-min(vout)
+        let av=vout_pp/vin_pp
+        print av
+        
+        
+    .endc
+    
+    .end
+    *vsak program se konča z .end
