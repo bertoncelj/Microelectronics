@@ -1,0 +1,87 @@
+Naloga 2
+	r_r1	1	2 	r=37.5k
+	r_r2	2	3	r=150.6k
+	
+	r_rs	1	4	r=5.432k
+	r_rd	5	3	r=12.56k
+	
+	r_rsi	6	7	r=500
+	r_rl	8	0	r=10k
+	
+
+*napajniki
+	
+	v_vss 	1	0	dc= 9
+	v_vdd	3	0	dc=-9	
+	v_vin	7	0	dc= 0	sin = (0, 0.0148, 5k)
+*kondez
+	c_cs	4	0	c=100u
+	c_c1	2	6	c=100u
+	c_c2	5	8	c=100u
+	
+#mosfet
+	.model pmosTest pmos level=1 vto=-0.5 kp=0.5m
+    m_ml    5   2   4   4   pmosTest    w=15u    l=1u
+	
+	
+		
+	.control
+	destroy all
+	
+	echo _______________VAJA 2______________
+    echo 
+    
+	op
+	
+	echo _____________Naloga_2________________
+    echo
+    
+	  *nastavimo vektorje ki jih iscemo
+        let idq  = v(1,4)/@r_rs[r]
+        let vsdq = v(4,5)
+        let vsgq = v(4,2)
+        
+        *izpis stevilk
+        print idq vsdq vsgq
+	
+		echo _____________Naloga_3________________
+        echo "Sprememba kp poveca 10%"
+        echo 
+        
+             idq_kp10posta = 5.027567e-04
+        print idq_kp10posta 
+        
+        dIdq = idq_kp10posta/idq
+        echo "Delta razlika Idq toka:"
+        print dIdq
+        
+        echo _____________Naloga_4________________
+        echo 
+        
+        tran 1u 5m
+        let id = v(1,4)/@r_rs[r]
+		let vsd=v(4,5)
+		let vsg=v(4,2)
+		let vout=v(8)
+		let vin=v(7)
+		let v_p=v(1)
+		let vgg=v(2)
+		let v_m=v(3)
+		fourier 5k vout
+        
+        echo "plot"
+        plot v(5) v(2) v(4) xlabel 'time' ylabel 'vd, vg, vs'
+        
+        echo _____________Naloga_5________________
+        echo
+        
+        	let vin_pp=max(vin)-min(vin)
+			let vout_pp=max(vout)-min(vout)
+			let av=vout_pp/vin_pp
+			
+			print av
+			
+        
+	.endc
+.end
+	
