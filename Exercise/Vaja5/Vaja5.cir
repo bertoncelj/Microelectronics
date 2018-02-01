@@ -21,8 +21,8 @@ Vaja5
     
     *napajalniki
     vcc      1   0   dc=10     
-    v_vin    8   0   dc=0   sin(0,0.005,5k) acmag=1
- 
+    v_vin    8   0   dc=0   sin(0,0.005,2k) acmag=1
+ 	
 
     *viri nadomestni za merjenje toka
     v_icq1    4  10  dc=0
