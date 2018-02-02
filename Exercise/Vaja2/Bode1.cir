@@ -1,0 +1,85 @@
+Shot_Circuit and Open-Circuit Time Constants
+
+	*upori
+		r_rs	1	2	r=1k
+		r_rp	3	0	r=10k
+
+	*condezator
+		c_cs	2	3	c=1k
+		c_cp	3	0	c=3p		
+		
+	*napajalnik
+		v_vg 	1	0	dc= 9 sin(1,0.005,5k) acmag=1
+		
+	.control
+	destroy all
+	
+	echo _______________BODE PLOT______________
+    echo 
+    
+	op
+	
+    
+	  *nastavimo vektorje ki jih iscemo
+        let irs  = v(1,2)/@r_rs[r]
+        let vout = v(3)
+        let v_rs = v(1,2)
+        
+        *izpis stevilk
+        print irs vout v_rs
+	
+		
+		    
+		echo 
+		echo ----------------------Napetostno, Tokovno ojacanje-----------------------------
+	
+		tran 1u 5m
+	
+		*napetostno ojacanje
+			let vout=v(3)
+			let vin=v(1)
+
+			let vout_pp=max(vout)-min(vout)
+			let vin_pp=max(vin)-min(vin)
+	
+			let Av = vout_pp/vin_pp
+		
+	
+		*izpise ojacanje
+		print  Av      
+        
+        
+        
+    echo 
+    echo .........NALOGA_4................
+     
+    echo ----------------------Malosignalna izmenicna analiza-----------------------------
+    
+    *malosignalna izmenicna analiza => potrebuje vsaj en acmag vir
+    *sytaxa:
+        *ac tip_skale st_tock fstart fstop
+    *Kva naredi spice?:condenzatorje in tuljave nadomesti z kompleksorji
+    
+    ac  dec   10   1   100meg
+    
+    let vout=v(3)
+	let vin=v(1)
+	av=vout/vin
+    *aplitudni spekter
+    let av_db=db(av)
+    
+    *phase spector
+    let av_ph=ph(av)
+    
+    plot av_db xlabel 'f' ylabel 'Av[dB]'
+    plot av_ph xlabel 'f' ylabel 'Phase'
+    
+    *fl in fh se odcita iz grafa -> 3dB dy in pugledas kok kaze dx
+    
+    *fh = 3*10^5
+    *fl = 4*10^3
+    *izpis av za AC izmenicni signal
+    *print av
+        
+	.endc
+.end
