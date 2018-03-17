@@ -1,0 +1,115 @@
+3.Lab Vaja: MOSFET  kaskodni ojačevalnik
+*Tf je funkcija ki iz vefje izpljuune vn kondeznatorje
+*ampak se jo ne rabi pri linearni elektroniki
+ 	
+ 	 *includamo tranzistor
+    .include models.inc
+ 	
+   	*upornosti
+    r_r1    3   2   r=90k
+    r_r2	2	0	r=184k
+    
+    r_re    4   5   r=5k
+   
+        
+    *kapacitiovnosti
+ 	c_c1	1	2	c=26n
+    
+    *napajalniki     
+    v_cc	  3   0   dc=6
+    v_ee	  5	  0	  dc=0
+    v_vg_in   1   0   dc=0 sin(0, 2, 1k) acmag=1
+    
+    *viri nadomestni za merjenje toka
+    v_icq     3  6  dc=0 
+    
+    *amplitudna vrednost sinusa se probava, da gledas vrednost THC procent  napake!
+    
+    *dodamo merilni napajalnik
+   
+    
+  * m_imeTran c b e -> imeModela parametri
+    * tukaj includamo model, ga ne setavimo, kot smo ga sestavili pri Vajah 1,2,3
+    q_q1    6   2   4   BC238B   
+    
+    
+    .control
+        destroy all
+        
+        echo _______________VAJA 2______________
+        echo 
+        
+        *naredi DC analizo
+        op
+
+       
+       let vce = v(3,4)
+       let vbe = v(2,4)
+       let vizh = v(4,5)
+       let ie   = v(4,5)/@r_re[r] 
+       let ic  	= i(v_icq)
+       let B	=1/((ie/ic) - 1)
+       print  B ic ie vce vbe vizh
+       
+       echo .................TRANZIANT ANALYSIS...................
+       *  tran dt tstop -> najbolj osnovna verzija
+       *     - dt je korak 
+       *     - tstop koliko signaala zahtevamo
+       tran 10u 5m 
+         
+         
+       let id= -i(v_vdd)
+       let vds = v(3,4)
+       let vgs = v(1,4)
+       let vin = v(2)
+       let vout = v(4)
+        
+         plot vin	vout  xlabel 'time [s]' ylabel 'r:vin(t), g:vout(t)'
+         
+         *  fourier analiza za popacenje
+         *  fourier f0 signal ->syntakse
+         fourier 1k vout
+         
+         let vin_pp = max(vin) - min(vin)
+         let vout_pp = max(vout) - min(vout)
+         let av = vout_pp/vin_pp
+         let Av = vout_pp/vin_pp
+         print av
+         
+         *manka av minus ker je v protifazi
+       
+         
+     echo 
+    echo .........NALOGA_4................
+     
+    echo ----------------------Malosignalna izmenicna 		analiza-----------------------------
+    
+    *malosignalna izmenicna analiza => potrebuje vsaj en acmag vir
+    *sytaxa:
+        *ac tip_skale st_tock fstart fstop
+    *Kva naredi spice?:condenzatorje in tuljave nadomesti z kompleksorji
+    
+    ac  dec   10   1   100meg
+    
+    let vin = v(1)
+    let vout = v(4)
+	let av1=vout/vin
+    *aplitudni spekter
+    let av_db=db(av1)
+    
+    *phase spector
+    let av_ph=ph(av1)
+    
+    plot av_db xlabel 'f' ylabel 'Av[dB]'
+    plot av_ph xlabel 'f' ylabel 'Phase'
+    
+    *fl in fh se odcita iz grafa -> 3dB dy in pugledas kok kaze dx
+    
+    *fh = 3*10^5
+    *fl = 4*10^3
+    *izpis av za AC izmenicni signal
+    *print av
+    
+    .endc
+    
+.end
