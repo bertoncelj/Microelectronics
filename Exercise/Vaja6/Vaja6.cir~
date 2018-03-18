@@ -1,0 +1,127 @@
+Vaja5
+
+*includamo tranzistor
+    .include models.inc
+
+    *AC analiza
+    
+    *upornosti
+    r_rb      6   1   r=1.64meg
+    r_rc      6   4   r=3.482k
+    
+    r_rscr    8   7   r=1k
+    r_rl      3   0   r=500k
+   
+    *kapacitiovnosti
+    c_c1    7    1    c=3.5u
+    c_cl    3    0    c=1n
+    
+    *napajalniki
+    vcc      6   0   dc=12     
+    v_vin    8   0   dc=0   sin(0,0.03,5k) acmag=1
+ 
+
+    *viri nadomestni za merjenje toka
+    v_icq     4  3  dc=0
+
+    
+    * m_imeTran (c b e) imeModela parametri
+    q_q1    3 1 0   BC238B 
+   
+    
+    .control
+    
+    destroy all
+  
+  	echo _________VAJA6__________
+    echo
+    echo        
+    echo .........NALOGA_2.........
+       
+    *naredi DC analizo
+    op
+            
+    *nastavimo vektorje ki jih iscemo
+    let icq   = i(v_icq)
+    let vceq  = v(3)
+            
+    *izpisemo vektroje
+     print icq vceq  
+    echo 
+    echo .........NALOGA_3................
+     
+  	echo ----------------------Napetostno ojacanje-----------------------------
+	
+	tran 1u 5m
+	
+	*napetostno ojacanje
+		let vout=v(3)
+		let vin=v(8)
+
+    	let vout_pp=max(vout)-min(vout)
+		let vin_pp=max(vin)-min(vin)
+	
+		let Av = vout_pp/vin_pp
+  
+  		*izpise ojacanje
+		print   Av
+  
+  
+  	echo ----------------------Malosignalna izmenicna analiza-----------------------------
+    
+    *malosignalna izmenicna analiza => potrebuje vsaj en acmag vir
+    *sytaxa:
+        *ac tip_skale st_tock fstart fstop
+    *Kva naredi spice?:condenzatorje in tuljave nadomesti z kompleksorji
+    
+   	ac  dec   100   1   100meg
+    
+   	let vout=v(3)
+	let vin=v(8)
+	av=vout/vin
+   	*aplitudni spekter
+  	
+  	let av_db=db(av)
+    
+    set units=degress
+   	*phase spector
+         let av_ph=ph(av)
+        
+   		 plot av_db xlabel 'f' ylabel 'Av[dB]'
+   		 plot unwrap(av_ph) xlabel 'f' ylabel 'Phase' 
+    
+    	*fl in fh se odcita iz grafa -> 3dB dy in pugledas kok kaze dx
+    
+    	*fh = 3*10^4
+        *fl = 2*10^1
+    	*izpis av za AC izmenicni signal
+        *print av
+        
+        echo Beremo z cursorjem: 
+        *beremo z cruzorjem
+        let c = 0
+        cursor c right av_db {max(av_db) - 3}
+        let flow = frequency[%c]
+        
+        let c = c + 1
+        cursor c right av_db {max(av_db) - 3}
+        let fhigh=frequency[%c] 
+        
+        *ojacanje
+        print abs(max(av))
+        print flow fhigh
+        
+    	
+    echo
+    echo .........NALOGA_5................
+    
+    *Cl 0.1pF   Av  fl  fh
+    *   0.1pF   19  18  3.64*10^5
+    *   10pF    19  18  3.42*10^5
+    *   1nF     18  18  4.42*10^4
+    *   brez    19  18  3.64*10^5
+  	
+  	.endc
+  	
+ .end
+
